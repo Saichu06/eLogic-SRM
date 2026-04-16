@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>eLogic SRM</title>
+  <title>SRM VoxLogic</title>
   <link rel="icon" type="image/png" href="logo.png">   
   <link
     href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap"
@@ -1627,8 +1627,8 @@
 <body>
 
   <header>
-    <div class="logo">e<span class="accent">Logic</span></div>
-    <div class="hcenter">DIGITAL LOGIC DESIGN SIMULATOR // SRMIST DLD LAB</div>
+    <div class="logo">SRM<span class="accent">VoxLogic</span></div>
+    <div class="hcenter">SRM VOXLOGIC // DIGITAL LOGIC DESIGN SIMULATOR</div>
     <div class="hright">
       <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Light/Dark">🌙</button>
       <button class="hbtn" id="voiceBtn" onclick="toggleVoice()">◉ VOICE</button>
@@ -1841,7 +1841,7 @@
     <div class="si">SIM <span class="v on" id="statusSim">AUTO</span></div>
     <div class="si-sep"></div>
     <div class="si">TICK <span class="v on" id="statusTick">0</span></div>
-    <div class="si" style="margin-left:auto;color:var(--text-dim)">SRMIST DLD LAB © 2025</div>
+    <div class="si" style="margin-left:auto;color:var(--text-dim)">SRM VoxLogic © 2026</div>
   </div>
 
   <div class="voice-ind" id="voiceInd">
@@ -2124,7 +2124,7 @@
       startRenderLoop();
       loadExperiment(1);
       startAutoSim(); // Start auto-sim on load
-      notify('eLogic ready — drag gates onto canvas', 'ok');
+      notify('SRM VoxLogic ready — drag gates onto canvas', 'ok');
     }
 
     function resizeCanvas() {
@@ -3149,7 +3149,7 @@
       if (voiceEnabled) {
         // Preload voices
         if (window.speechSynthesis) speechSynthesis.getVoices();
-        speak("Voice narration enabled. Welcome to eLogic 2 point 0. Select an experiment and click Narrate in the Script tab.");
+        speak("Voice narration enabled. Welcome to SRM VoxLogic. Select an experiment and click Narrate in the Script tab.");
       } else {
         speechSynthesis?.cancel();
         document.getElementById('voiceInd').classList.remove('show');
@@ -3314,7 +3314,7 @@
       msgs.appendChild(td); msgs.scrollTop = msgs.scrollHeight;
       const exp = EXPERIMENTS.find(e => e.id === currentExp);
       const circuit = getCircuitContext();
-      const sys = `You are an expert Digital Logic Design tutor for engineering students at SRMIST.
+      const sys = `You are the AI tutor for SRM VoxLogic, a digital logic simulator for SRMIST students.
 Current experiment: Exp ${currentExp} - ${exp?.name?.replace('\n', ' ')} (${exp?.desc}).
 Canvas state: ${circuit}
 Rules: Clear focused explanations. Use examples. Under 130 words unless deep detail needed. Plain text only, no markdown or bullet points. Analyze actual gate connections and values when asked about the circuit.`;
@@ -3425,7 +3425,7 @@ Rules: Clear focused explanations. Use examples. Under 130 words unless deep det
       const data = JSON.stringify({ version: '2.0', exp: currentExp, gates, wires, meta: { snapEnabled, zoom, isDark } }, null, 2);
       const blob = new Blob([data], { type: 'application/json' });
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob); a.download = `eLogic_exp${currentExp}_${Date.now()}.json`;
+      a.href = URL.createObjectURL(blob);a.download = `srm_voxlogic_exp${currentExp}_${Date.now()}.json`;
       a.click(); URL.revokeObjectURL(a.href); notify('Circuit exported', 'ok');
     }
     function importCircuit() { document.getElementById('importFileInput').click(); }
