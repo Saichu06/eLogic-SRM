@@ -3287,6 +3287,160 @@
       updateSimUI();
     }
 
+
+    // The intelligent response generator (NO APIS) - Complete Version
+    function generateAIResponse(question) {
+      const q = question.toLowerCase().trim();
+
+      // ========== BASIC HUMAN CONVERSATIONS ==========
+      if (q === 'hi' || q === 'hello' || q === 'hey' || q === 'hello there' || q === 'hi there') {
+        return "Hello. I am the SRM VoxLogic AI Tutor. I am here to help you learn digital logic design. You can ask me about logic gates, circuits, experiments, or how to use the simulator. What would you like to learn today?";
+      }
+
+      if (q.includes('how are you') || q.includes('how r u')) {
+        return "I am functioning perfectly and ready to assist you with your digital logic studies. I have access to all 12 experiments, gate libraries, and circuit analysis tools. How can I help you with your DLD lab work today?";
+      }
+
+      if (q.includes('thank')) {
+        return "You are welcome. I am glad to assist you with your digital logic learning. Keep practicing and you will master these concepts.";
+      }
+
+      if (q.includes('bye') || q.includes('goodbye')) {
+        return "Goodbye. Keep exploring digital logic. Remember you can always return to the simulator for more practice. Have a great day.";
+      }
+
+      if (q.includes('what is your name') || q.includes('who are you')) {
+        return "I am the SRM VoxLogic AI Tutor, your intelligent assistant for the Digital Logic Design Laboratory at SRM Institute of Science and Technology.";
+      }
+
+      // ========== LOGIC GATES ==========
+      if (q.includes('and gate') || q === 'and') {
+        return "AND GATE: Output is 1 only when ALL inputs are 1. Truth table: 0 0=0, 0 1=0, 1 0=0, 1 1=1. Expression: Y = A · B. Used in security systems where all conditions must be met.";
+      }
+
+      if (q.includes('or gate') || q === 'or') {
+        return "OR GATE: Output is 1 when ANY input is 1. Truth table: 0 0=0, 0 1=1, 1 0=1, 1 1=1. Expression: Y = A + B. Used in alarm systems where any trigger activates the alarm.";
+      }
+
+      if (q.includes('not gate') || q.includes('inverter') || q === 'not') {
+        return "NOT GATE: Output is opposite of input. Truth table: NOT 0=1, NOT 1=0. Expression: Y = A'. Used to invert signals.";
+      }
+
+      if (q.includes('nand gate') || q === 'nand') {
+        return "NAND GATE: Output is 0 only when ALL inputs are 1. Truth table: 0 0=1, 0 1=1, 1 0=1, 1 1=0. Expression: Y = (A·B)'. NAND is a UNIVERSAL gate - you can build any gate using only NAND gates.";
+      }
+
+      if (q.includes('nor gate') || q === 'nor') {
+        return "NOR GATE: Output is 1 only when ALL inputs are 0. Truth table: 0 0=1, 0 1=0, 1 0=0, 1 1=0. Expression: Y = (A+B)'. NOR is also a UNIVERSAL gate.";
+      }
+
+      if (q.includes('xor gate') || q === 'xor') {
+        return "XOR GATE: Output is 1 when inputs are DIFFERENT. Truth table: 0 0=0, 0 1=1, 1 0=1, 1 1=0. Expression: Y = A ⊕ B. Core component of ADDER circuits - gives the SUM bit.";
+      }
+
+      if (q.includes('xnor gate') || q === 'xnor') {
+        return "XNOR GATE: Output is 1 when inputs are SAME. Truth table: 0 0=1, 0 1=0, 1 0=0, 1 1=1. Expression: Y = (A⊕B)'. Used in COMPARATORS to check if bits are equal.";
+      }
+
+      // ========== EXPERIMENTS 1-12 ==========
+      if (q.includes('experiment 1') || (q.includes('exp 1') && !q.includes('2'))) {
+        return "EXPERIMENT 1: Logic Gates and Truth Tables. Covers AND, OR, NOT, NAND, NOR, XOR, XNOR gates. Learn truth tables, Boolean expressions, and gate verification. Double-click INPUT nodes to test all combinations.";
+      }
+
+      if (q.includes('experiment 2') || q.includes('exp 2')) {
+        return "EXPERIMENT 2: Universal Gates using NAND and NOR. Learn to build AND, OR, NOT using only NAND gates, and then using only NOR gates. Demonstrates why NAND and NOR are called universal gates.";
+      }
+
+      if (q.includes('experiment 3') || q.includes('exp 3')) {
+        return "EXPERIMENT 3: Half Adder and Half Subtractor. Half Adder: Sum = A XOR B, Carry = A AND B. Half Subtractor: Difference = A XOR B, Borrow = NOT A AND B. Cannot handle carry-in from previous stage.";
+      }
+
+      if (q.includes('experiment 4') || q.includes('exp 4')) {
+        return "EXPERIMENT 4: Full Adder and Full Subtractor. Accepts carry-in/borrow-in for cascading. Full Adder: Sum = A XOR B XOR Cin, Cout = (A·B)+(B·Cin)+(A·Cin). Essential for multi-bit addition.";
+      }
+
+      if (q.includes('experiment 5') || q.includes('exp 5')) {
+        return "EXPERIMENT 5: 4-bit Ripple Carry Adder. Chains four full adders to add 4-bit numbers. Carry ripples from LSB to MSB. Limitation is propagation delay - each stage waits for previous carry.";
+      }
+
+      if (q.includes('experiment 6') || q.includes('exp 6')) {
+        return "EXPERIMENT 6: BCD Adder. Adds BCD digits (0-9). When sum exceeds 9, adds 0110 (6) for correction. Used in calculators and financial systems where decimal accuracy is critical.";
+      }
+
+      if (q.includes('experiment 7') || q.includes('exp 7')) {
+        return "EXPERIMENT 7: Code Converters. Binary to Gray code: G3=B3, G2=B3⊕B2, G1=B2⊕B1, G0=B1⊕B0. Gray code has only one bit change between consecutive values. Also covers BCD to Excess-3 conversion.";
+      }
+
+      if (q.includes('experiment 8') || q.includes('exp 8')) {
+        return "EXPERIMENT 8: Encoders and Decoders. 3-to-8 decoder activates one of eight outputs based on 3-bit input. Priority encoder converts active input line to binary code, handling multiple active inputs by priority.";
+      }
+
+      if (q.includes('experiment 9') || q.includes('exp 9')) {
+        return "EXPERIMENT 9: Multiplexer and Demultiplexer. 4-to-1 MUX selects one of four inputs using two select lines. 1-to-4 DEMUX routes one input to one of four outputs. Used in data routing and signal distribution.";
+      }
+
+      if (q.includes('experiment 10') || q.includes('exp 10')) {
+        return "EXPERIMENT 10: SR Flip-Flop using NAND Gates. First sequential circuit with memory. States: SET (S=0,R=1), RESET (S=1,R=0), HOLD (S=1,R=1). Forbidden state when S=0,R=0. Used in debouncing switches and registers.";
+      }
+
+      if (q.includes('experiment 11') || q.includes('exp 11')) {
+        return "EXPERIMENT 11: JK and D Flip-Flops. JK solves SR forbidden state by toggling when J=K=1. D flip-flop: Q follows D on clock edge - most widely used. Used in frequency dividers, counters, registers.";
+      }
+
+      if (q.includes('experiment 12') || q.includes('exp 12')) {
+        return "EXPERIMENT 12: Counters and Registers. 3-bit ripple counter counts 000 to 111. Shift register shifts data left/right each clock. Used in timers, program counters, serial communication.";
+      }
+
+      // ========== CIRCUIT ANALYSIS ==========
+      if (q.includes('my circuit') || q.includes('what do i have') || q.includes('analyze')) {
+        const gc = gates ? gates.length : 0;
+        const ic = gates ? gates.filter(g => g.type === 'INPUT').length : 0;
+        const oc = gates ? gates.filter(g => g.type === 'OUTPUT').length : 0;
+        const wc = wires ? wires.length : 0;
+
+        if (gc === 0) return "Your canvas is empty. Drag gates from the left palette or load an experiment from the sidebar.";
+
+        return "Your circuit has " + gc + " gates (" + ic + " inputs, " + oc + " outputs) and " + wc + " wire connections. Double-click INPUT nodes to toggle values. Click the Auto Truth Table button to test all combinations.";
+      }
+
+      // ========== TROUBLESHOOTING ==========
+      if (q.includes('not working') || q.includes('stuck') || q.includes('error')) {
+        return "TROUBLESHOOTING TIPS: 1. Refresh the browser page. 2. Click the Reset button to reload the experiment. 3. For wires, ensure you are clicking exactly on the port circles. 4. Try dragging a gate from the palette. If problems persist, contact your DLD lab instructor.";
+      }
+
+      // ========== HOW TO USE ==========
+      if (q.includes('how to use') || q.includes('tutorial')) {
+        return "HOW TO USE: 1. Drag gates from left palette onto canvas. 2. Click Wire tool (W key), click output port, then input port. 3. Double-click INPUT nodes to toggle 0/1. 4. Press F to fit view. 5. Use right panel for Truth Table, Boolean Expression, Waveform. 6. Click MIC for voice commands.";
+      }
+
+      // ========== SHORTCUTS ==========
+      if (q.includes('shortcut') || q.includes('keyboard')) {
+        return "KEYBOARD SHORTCUTS: S=Select, W=Wire, D=Delete, F=Fit view, +=Zoom in, -=Zoom out, G=Snap grid, T=Theme, Space=Step, Ctrl+Z=Undo, Ctrl+Y=Redo, Ctrl+D=Duplicate, Delete=Delete gate.";
+      }
+
+      // ========== BOOLEAN ALGEBRA ==========
+      if (q.includes('boolean') || q.includes('de morgan')) {
+        return "BOOLEAN ALGEBRA: Identity: A·1=A, A+0=A. Null: A·0=0, A+1=1. Complement: A·A'=0, A+A'=1. DeMorgan's Laws: (A·B)' = A'+B', (A+B)' = A'·B'. These laws help simplify circuits to use fewer gates.";
+      }
+
+      // ========== FLIP FLOPS ==========
+      if (q.includes('flip flop') || q === 'flipflop') {
+        return "FLIP-FLOPS: Sequential circuits that store 1 bit. SR has Set, Reset, Hold states. JK toggles when J=K=1. D flip-flop: Q follows D on clock edge. Used in registers, counters, memory.";
+      }
+
+      // ========== ADDERS ==========
+      if (q.includes('adder') && !q.includes('experiment')) {
+        return "ADDERS: Half Adder adds 2 bits (Sum=A⊕B, Carry=A·B). Full Adder adds 3 bits including carry-in. 4-bit Ripple Carry Adder chains Full Adders. BCD Adder adds decimal digits with correction for sums over 9.";
+      }
+
+      // ========== VOICE COMMANDS ==========
+      if (q.includes('voice command') || (q.includes('say') && q.includes('mic'))) {
+        return "VOICE COMMANDS: 'simulate' or 'run' for auto-simulation, 'reset' to clear, 'next experiment', 'previous experiment', 'explain' for selected gate, 'truth table', 'what is my circuit', 'narrate', 'zoom in', 'zoom out', 'fit view', 'undo', 'redo', 'dark mode', 'light mode', 'stop'.";
+      }
+
+      // ========== DEFAULT ==========
+      return "I am the SRM VoxLogic AI Tutor. I can help you with: Logic Gates (AND, OR, NOT, NAND, NOR, XOR, XNOR), Experiments 1-12, Circuit Analysis ('what is my circuit'), Boolean Algebra, Flip-flops, Adders, Keyboard Shortcuts, and Voice Commands. What would you like to learn?";
+    }
     /* ═══════════════════════════ AI ═══════════════════════════ */
     function getCircuitContext() {
       if (!gates.length) return 'Canvas is empty.';
