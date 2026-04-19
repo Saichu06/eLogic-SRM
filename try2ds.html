@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SRM VoxLogic</title>
-  <link rel="icon" type="image/png" href="logo.png">   
+  <link rel="icon" type="image/png" href="logo.png">
   <link
     href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap"
     rel="stylesheet">
@@ -3303,34 +3303,40 @@
       notify('Circuit state injected', 'ok');
     }
     async function sendAI() {
-      if (aiPending) return;
-      const inp = document.getElementById('aiInput'); const msg = inp.value.trim();
-      if (!msg) return; inp.value = ''; aiPending = true;
-      document.getElementById('aiSendBtn').disabled = true; switchTab('ai');
+      const input = document.getElementById('aiInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+
       const msgs = document.getElementById('aiMessages');
-      const ud = document.createElement('div'); ud.className = 'msg user-msg'; ud.textContent = msg; msgs.appendChild(ud);
-      const td = document.createElement('div'); td.className = 'msg ai-msg';
+
+      // Add user bubble
+      const ud = document.createElement('div');
+      ud.className = 'msg user-msg';
+      ud.textContent = msg;
+      msgs.appendChild(ud);
+
+      // Add typing indicator
+      const td = document.createElement('div');
+      td.className = 'msg ai-msg';
       td.innerHTML = '<div class="msg-lbl">▸ AI TUTOR</div><div class="typing-dots"><span></span><span></span><span></span></div>';
-      msgs.appendChild(td); msgs.scrollTop = msgs.scrollHeight;
-      const exp = EXPERIMENTS.find(e => e.id === currentExp);
-      const circuit = getCircuitContext();
-      const sys = `You are the AI tutor for SRM VoxLogic, a digital logic simulator for SRMIST students.
-Current experiment: Exp ${currentExp} - ${exp?.name?.replace('\n', ' ')} (${exp?.desc}).
-Canvas state: ${circuit}
-Rules: Clear focused explanations. Use examples. Under 130 words unless deep detail needed. Plain text only, no markdown or bullet points. Analyze actual gate connections and values when asked about the circuit.`;
-      try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: sys, messages: [{ role: "user", content: msg }] })
-        });
-        const data = await res.json();
-        const reply = data.content?.map(c => c.text || '').join('') || "Sorry, couldn't get a response.";
-        td.innerHTML = `<div class="msg-lbl">▸ AI TUTOR</div>${reply}`;
-        if (voiceEnabled) speak(reply.slice(0, 280));
-      } catch (err) {
-        td.innerHTML = `<div class="msg-lbl">▸ AI TUTOR</div>Connection error. Ensure you're running in the Claude environment for AI features.`;
-      }
-      msgs.scrollTop = msgs.scrollHeight; aiPending = false; document.getElementById('aiSendBtn').disabled = false;
+      msgs.appendChild(td);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      document.getElementById('aiSendBtn').disabled = true;
+
+      // Simulate thinking delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Use the offline response generator (NO API KEY NEEDED)
+      const reply = generateAIResponse(msg);
+
+      td.innerHTML = '<div class="msg-lbl">▸ AI TUTOR</div>' + reply.replace(/\n/g, '<br>');
+
+      if (voiceEnabled) speak(reply.slice(0, 200));
+
+      document.getElementById('aiSendBtn').disabled = false;
+      msgs.scrollTop = msgs.scrollHeight;
     }
 
     /* ═══════════════════════════ CONTEXT MENU ═══════════════════════════ */
@@ -3425,7 +3431,7 @@ Rules: Clear focused explanations. Use examples. Under 130 words unless deep det
       const data = JSON.stringify({ version: '2.0', exp: currentExp, gates, wires, meta: { snapEnabled, zoom, isDark } }, null, 2);
       const blob = new Blob([data], { type: 'application/json' });
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);a.download = `srm_voxlogic_exp${currentExp}_${Date.now()}.json`;
+      a.href = URL.createObjectURL(blob); a.download = `srm_voxlogic_exp${currentExp}_${Date.now()}.json`;
       a.click(); URL.revokeObjectURL(a.href); notify('Circuit exported', 'ok');
     }
     function importCircuit() { document.getElementById('importFileInput').click(); }
