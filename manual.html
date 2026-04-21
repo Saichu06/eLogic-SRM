@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SRM VoxLogic — Lab Documentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06090d;
+      --panel: #0a0f16;
+      --panel2: #0e1520;
+      --border: #1a2d42;
+      --border2: #243a52;
+      --cyan: #00e5ff;
+      --cyan2: #00b4cc;
+      --green: #00ff88;
+      --orange: #ff7043;
+      --yellow: #ffd740;
+      --red: #ff3355;
+      --purple: #c77dff;
+      --text: #c0d4e8;
+      --text2: #8aaac0;
+      --text-dim: #3d5a72;
+      --scanline: rgba(0,229,255,0.012);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, var(--scanline) 3px, var(--scanline) 4px);
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      height: 52px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--cyan) 40%, var(--green) 60%, transparent 100%);
+      opacity: .4;
+    }
+    .logo {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: 17px;
+      color: var(--cyan);
+      letter-spacing: 4px;
+    }
+    .logo .accent { color: var(--green); }
+    .logo .sub {
+      font-size: 9px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      font-weight: 400;
+      display: block;
+      margin-top: -2px;
+    }
+    .back-btn {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text-dim);
+      padding: 5px 14px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: all .18s;
+    }
+    .back-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* ── SIDEBAR ── */
+    .sidenav {
+      width: 220px;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      flex-shrink: 0;
+      padding: 14px 0;
+    }
+    .sidenav::-webkit-scrollbar { width: 3px; }
+    .sidenav::-webkit-scrollbar-thumb { background: var(--border2); }
+    .sidenav-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      color: var(--cyan);
+      letter-spacing: 3px;
+      padding: 0 14px 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 14px;
+      cursor: pointer;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all .15s;
+    }
+    .nav-item:hover { background: rgba(0,229,255,.04); border-left-color: var(--cyan2); }
+    .nav-item.active { background: rgba(0,229,255,.07); border-left-color: var(--cyan); }
+    .nav-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      color: var(--text-dim);
+      width: 26px;
+      flex-shrink: 0;
+    }
+    .nav-label {
+      font-size: 11px;
+      color: var(--text2);
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .nav-tag {
+      margin-left: auto;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 7px;
+      padding: 1px 4px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .tag-basic { background: rgba(0,229,255,.08); color: var(--cyan2); }
+    .tag-combo { background: rgba(0,255,136,.08); color: var(--green); }
+    .tag-seq   { background: rgba(199,125,255,.08); color: var(--purple); }
+
+    /* ── CONTENT ── */
+    .content {
+      flex: 1;
+      padding: 32px 48px;
+      max-width: 960px;
+    }
+
+    .doc-hero {
+      margin-bottom: 48px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 28px;
+    }
+    .doc-hero-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 26px;
+      color: var(--cyan);
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+    }
+    .doc-hero-sub {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+    .doc-hero-badges {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .hero-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border-radius: 2px;
+      border: 1px solid;
+    }
+
+    /* ── EXPERIMENT SECTION ── */
+    .exp-section {
+      margin-bottom: 60px;
+      scroll-margin-top: 72px;
+    }
+    .exp-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .exp-num-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      color: var(--bg);
+      background: var(--cyan);
+      padding: 4px 10px;
+      border-radius: 2px;
+      letter-spacing: 2px;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .exp-num-badge.seq { background: var(--purple); }
+    .exp-num-badge.combo { background: var(--green); color: var(--bg); }
+    .exp-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 16px;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      line-height: 1.4;
+    }
+    .exp-title.seq { color: var(--purple); }
+    .exp-title.combo { color: var(--green); }
+    .exp-subtitle {
+      font-size: 12px;
+      color: var(--text-dim);
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 1px;
+      margin-top: 3px;
+    }
+
+    /* Two-column grid */
+    .exp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 740px) { .exp-grid { grid-template-columns: 1fr; } .content { padding: 20px 16px; } }
+
+    .exp-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 14px 16px;
+    }
+    .exp-card-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      margin-bottom: 9px;
+      text-transform: uppercase;
+    }
+    .exp-card p, .exp-card li {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.75;
+    }
+    .exp-card ul { padding-left: 16px; }
+    .exp-card li { margin-bottom: 3px; }
+
+    /* Circuit diagram / output visualizer */
+    .circuit-box {
+      background: var(--panel2);
+      border: 1px solid var(--border2);
+      border-radius: 3px;
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .circuit-box::before {
+      content: 'CIRCUIT DIAGRAM';
+      position: absolute;
+      top: 8px; left: 12px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 7px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    /* Truth table inline */
+    .tt-wrap {
+      overflow-x: auto;
+      margin-bottom: 16px;
+    }
+    .tt {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+    }
+    .tt th {
+      padding: 6px 12px;
+      color: var(--cyan);
+      border-bottom: 1px solid var(--border2);
+      text-align: center;
+      font-size: 9px;
+      letter-spacing: 1px;
+      background: var(--panel);
+    }
+    .tt td {
+      padding: 5px 12px;
+      text-align: center;
+      border-bottom: 1px solid rgba(26,45,66,.4);
+      color: var(--text-dim);
+    }
+    .tt td.one { color: var(--green); font-weight: bold; }
+    .tt td.zero { color: var(--text-dim); }
+    .tt tr:hover td { background: rgba(0,229,255,.03); }
+
+    /* Steps / how to operate */
+    .steps-list {
+      counter-reset: step;
+      list-style: none;
+      padding: 0;
+    }
+    .steps-list li {
+      counter-increment: step;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+    .steps-list li::before {
+      content: counter(step, decimal-leading-zero);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      color: var(--cyan);
+      background: rgba(0,229,255,.06);
+      border: 1px solid rgba(0,229,255,.15);
+      border-radius: 2px;
+      padding: 2px 7px;
+      flex-shrink: 0;
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+
+    /* Boolean expression */
+    .bool-box {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--cyan);
+      padding: 8px 14px;
+      background: rgba(0,229,255,.04);
+      border-left: 2px solid var(--cyan);
+      margin-bottom: 12px;
+      line-height: 1.8;
+      word-break: break-word;
+    }
+    .bool-box.green { color: var(--green); border-left-color: var(--green); background: rgba(0,255,136,.03); }
+
+    /* Key points */
+    .key-points {
+      padding: 12px 16px;
+      background: rgba(255,112,67,.04);
+      border: 1px solid rgba(255,112,67,.15);
+      border-radius: 3px;
+      margin-bottom: 16px;
+    }
+    .key-points-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      color: var(--orange);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .key-points ul { list-style: none; padding: 0; }
+    .key-points li {
+      font-size: 12px;
+      color: var(--text2);
+      padding: 3px 0;
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.65;
+    }
+    .key-points li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--orange);
+      font-size: 9px;
+    }
+
+    /* SVG circuit diagrams */
+    svg.cdiag {
+      display: block;
+      margin: 0 auto;
+      padding-top: 20px;
+    }
+
+    /* Separator */
+    .exp-sep {
+      height: 1px;
+      background: linear-gradient(90deg, var(--border) 0%, var(--cyan2) 50%, var(--border) 100%);
+      opacity: .3;
+      margin: 48px 0;
+    }
+
+    /* Fullwidth card */
+    .full-card {
+      grid-column: 1 / -1;
+    }
+
+    /* Output diagram using SVG gates */
+    .gate-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 18px 48px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    SRM<span class="accent">VoxLogic</span>
+    <span class="sub">LABORATORY DOCUMENTATION</span>
+  </div>
+  <a href="#" onclick="history.back()" class="back-btn">← BACK TO SIMULATOR</a>
+</header>
+
+<div class="layout">
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidenav">
+    <div class="sidenav-title">EXPERIMENTS</div>
+    <a class="nav-item" href="#exp1"><span class="nav-num">01</span><span class="nav-label">Logic Gates</span><span class="nav-tag tag-basic">BASIC</span></a>
+    <a class="nav-item" href="#exp2"><span class="nav-num">02</span><span class="nav-label">Universal Gates</span><span class="nav-tag tag-combo">COMBO</span></a>
+    <a class="nav-item" href="#exp3"><span class="nav-num">03</span><span class="nav-label">Half Adder</span><span class="nav-tag tag-combo">COMBO</span></a>
+    <a class="nav-item" href="#exp4"><span class="nav-num">04</span><span class="nav-label">Full Adder</span><span class="nav-tag tag-combo">COMBO</span></a>
+    <a class="nav-item" href="#exp5"><span class="nav-num">05</span><span class="nav-label">4-bit Adder</span><span class="nav-tag tag-combo">COMBO</span></a>
+    <a class="nav-item" href="#exp6"><span class="nav-num">06</span><span class="nav-label">BCD Adder</span><span class="nav-tag tag-combo">COMBO</span></a>
+    <a class="nav-item" href="#exp7"><span class="nav-num">07</span><span class="nav-label">Code Converters</span><span class="nav-tag tag-combo">COMBO</span></a>
+    <a class="nav-item" href="#exp8"><span class="nav-num">08</span><span class="nav-label">Enc & Dec</span><span class="nav-tag tag-combo">COMBO</span></a>
+    <a class="nav-item" href="#exp9"><span class="nav-num">09</span><span class="nav-label">MUX & DEMUX</span><span class="nav-tag tag-combo">COMBO</span></a>
+    <a class="nav-item" href="#exp10"><span class="nav-num">10</span><span class="nav-label">SR Flip-Flop</span><span class="nav-tag tag-seq">SEQ</span></a>
+    <a class="nav-item" href="#exp11"><span class="nav-num">11</span><span class="nav-label">JK & D FF</span><span class="nav-tag tag-seq">SEQ</span></a>
+    <a class="nav-item" href="#exp12"><span class="nav-num">12</span><span class="nav-label">Counters & Reg</span><span class="nav-tag tag-seq">SEQ</span></a>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="content">
+
+    <!-- Hero -->
+    <div class="doc-hero">
+      <div class="doc-hero-title">DLD LAB MANUAL</div>
+      <div class="doc-hero-sub">Complete reference for all 12 Digital Logic Design experiments. Includes circuit diagrams, truth tables, Boolean expressions, step-by-step operating instructions, and key points for each lab.</div>
+      <div class="doc-hero-badges">
+        <span class="hero-badge" style="color:var(--cyan);border-color:rgba(0,229,255,.3)">12 EXPERIMENTS</span>
+        <span class="hero-badge" style="color:var(--green);border-color:rgba(0,255,136,.3)">COMBINATIONAL</span>
+        <span class="hero-badge" style="color:var(--purple);border-color:rgba(199,125,255,.3)">SEQUENTIAL</span>
+        <span class="hero-badge" style="color:var(--orange);border-color:rgba(255,112,67,.3)">SRM INSTITUTE</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════ EXP 01 ══════════════════════ -->
+    <section class="exp-section" id="exp1">
+      <div class="exp-header">
+        <span class="exp-num-badge">EXP 01</span>
+        <div>
+          <div class="exp-title">Logic Gates &amp; Truth Tables</div>
+          <div class="exp-subtitle">COMBINATIONAL — FUNDAMENTAL GATES</div>
+        </div>
+      </div>
+
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">AIM</div>
+          <p>To study the truth tables and verify the logic operation of fundamental gates: AND, OR, NOT, NAND, NOR, XOR, and XNOR using the VoxLogic simulator.</p>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">BOOLEAN EXPRESSIONS</div>
+          <p style="margin-bottom:5px"><span style="color:var(--cyan);font-family:'Share Tech Mono',monospace">AND :</span> Y = A · B</p>
+          <p style="margin-bottom:5px"><span style="color:var(--cyan);font-family:'Share Tech Mono',monospace">OR  :</span> Y = A + B</p>
+          <p style="margin-bottom:5px"><span style="color:var(--cyan);font-family:'Share Tech Mono',monospace">NOT :</span> Y = A'</p>
+          <p style="margin-bottom:5px"><span style="color:var(--cyan);font-family:'Share Tech Mono',monospace">NAND:</span> Y = (A·B)'</p>
+          <p style="margin-bottom:5px"><span style="color:var(--cyan);font-family:'Share Tech Mono',monospace">NOR :</span> Y = (A+B)'</p>
+          <p style="margin-bottom:5px"><span style="color:var(--cyan);font-family:'Share Tech Mono',monospace">XOR :</span> Y = A ⊕ B</p>
+          <p><span style="color:var(--cyan);font-family:'Share Tech Mono',monospace">XNOR:</span> Y = (A⊕B)'</p>
+        </div>
+      </div>
+
+      <!-- Circuit SVG -->
+      <div class="circuit-box">
+        <svg class="cdiag" viewBox="0 0 700 200" width="660" height="200" xmlns="http://www.w3.org/2000/svg">
+          <!-- Input lines -->
+          <line x1="30" y1="70" x2="100" y2="70" stroke="#00e5ff" stroke-width="1.5"/>
+          <line x1="30" y1="100" x2="100" y2="100" stroke="#00e5ff" stroke-width="1.5"/>
+          <text x="18" y="74" fill="#00e5ff" font-family="Share Tech Mono" font-size="10">A</text>
+          <text x="18" y="104" fill="#00e5ff" font-family="Share Tech Mono" font-size="10">B</text>
+          <!-- AND gate -->
+          <path d="M100,55 L100,115 L120,115 A25,25 0 0,0 120,55 Z" stroke="#3d7a90" fill="#0e1520" stroke-width="1.5"/>
+          <line x1="145" y1="85" x2="175" y2="85" stroke="#00ff88" stroke-width="1.5"/>
+          <text x="100" y="140" fill="#3d5a72" font-family="Share Tech Mono" font-size="9">AND</text>
+          <!-- OR gate -->
+          <path d="M205,55 Q215,55 230,85 Q215,115 205,115 Q215,85 205,55Z" stroke="#3d7a90" fill="#0e1520" stroke-width="1.5"/>
+          <line x1="30" y1="70" x2="205" y2="70" stroke="#00e5ff" stroke-width="1" stroke-dasharray="4,3" opacity=".4"/>
+          <line x1="30" y1="100" x2="205" y2="100" stroke="#00e5ff" stroke-width="1" stroke-dasharray="4,3" opacity=".4"/>
+          <line x1="231" y1="85" x2="265" y2="85" stroke="#00ff88" stroke-width="1.5"/>
+          <text x="200" y="140" fill="#3d5a72" font-family="Share Tech Mono" font-size="9">OR</text>
+          <!-- NOT gate -->
+          <path d="M295,72 L320,85 L295,98Z" stroke="#3d7a90" fill="#0e1520" stroke-width="1.5"/>
+          <circle cx="323" cy="85" r="4" stroke="#3d7a90" fill="#0e1520" stroke-width="1.5"/>
+          <line x1="265" y1="85" x2="295" y2="85" stroke="#00e5ff" stroke-width="1" stroke-dasharray="4,3" opacity=".4"/>
+          <line x1="327" y1="85" x2="360" y2="85" stroke="#ff3355" stroke-width="1.5"/>
+          <text x="290" y="140" fill="#3d5a72" font-family="Share Tech Mono" font-size="9">NOT</text>
+          <!-- XOR gate -->
+          <path d="M390,55 Q400,55 415,85 Q400,115 390,115 Q400,85 390,55Z" stroke="#3d7a90" fill="#0e1520" stroke-width="1.5"/>
+          <path d="M385,55 Q390,85 385,115" stroke="#3d7a90" fill="none" stroke-width="1.5"/>
+          <line x1="30" y1="70" x2="390" y2="70" stroke="#00e5ff" stroke-width="1" stroke-dasharray="4,3" opacity=".25"/>
+          <line x1="30" y1="100" x2="390" y2="100" stroke="#00e5ff" stroke-width="1" stroke-dasharray="4,3" opacity=".25"/>
+          <line x1="416" y1="85" x2="450" y2="85" stroke="#00ff88" stroke-width="1.5"/>
+          <text x="385" y="140" fill="#3d5a72" font-family="Share Tech Mono" font-size="9">XOR</text>
+          <!-- Outputs -->
+          <circle cx="175" cy="85" r="4" fill="#00ff88" opacity=".7"/>
+          <text x="180" y="89" fill="#00ff88" font-family="Share Tech Mono" font-size="9">Y</text>
+          <circle cx="265" cy="85" r="4" fill="#00ff88" opacity=".7"/>
+          <text x="270" y="89" fill="#00ff88" font-family="Share Tech Mono" font-size="9">Y</text>
+          <circle cx="360" cy="85" r="4" fill="#ff3355" opacity=".7"/>
+          <text x="365" y="89" fill="#ff3355" font-family="Share Tech Mono" font-size="9">Y'</text>
+          <circle cx="450" cy="85" r="4" fill="#00ff88" opacity=".7"/>
+          <text x="455" y="89" fill="#00ff88" font-family="Share Tech Mono" font-size="9">Y</text>
+        </svg>
+      </div>
+
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">TRUTH TABLE — AND / OR / NAND / NOR</div>
+          <div class="tt-wrap">
+            <table class="tt">
+              <thead><tr><th>A</th><th>B</th><th>AND</th><th>OR</th><th>NAND</th><th>NOR</th></tr></thead>
+              <tbody>
+                <tr><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td></tr>
+                <tr><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">TRUTH TABLE — XOR / XNOR / NOT</div>
+          <div class="tt-wrap">
+            <table class="tt">
+              <thead><tr><th>A</th><th>B</th><th>XOR</th><th>XNOR</th><th>NOT A</th></tr></thead>
+              <tbody>
+                <tr><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td></tr>
+                <tr><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td></tr>
+                <tr><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 1 from the sidebar. Gates (AND, OR, NOT, NAND, NOR, XOR, XNOR) appear on the canvas.</li>
+          <li>Click the <strong style="color:var(--cyan)">Wire tool (W)</strong> and connect the INPUT nodes (A, B) to a gate's input ports.</li>
+          <li><strong style="color:var(--cyan)">Double-click</strong> any INPUT node to toggle its value between 0 and 1.</li>
+          <li>Observe the output port — green glow = logic 1, dim = logic 0.</li>
+          <li>Click the <strong style="color:var(--cyan)">▶▶ Auto Truth Table</strong> button in the toolbar to auto-cycle all 4 input combinations.</li>
+          <li>View the generated truth table in the <strong style="color:var(--cyan)">Truth</strong> panel on the right.</li>
+          <li>Click each gate to see its individual truth table highlighted with the current active row.</li>
+        </ol>
+      </div>
+
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>NAND and NOR are <strong>Universal Gates</strong> — any Boolean function can be implemented using only NAND or only NOR gates.</li>
+          <li>XOR gives <strong>Sum bit</strong> in adder circuits; AND gives <strong>Carry bit</strong>.</li>
+          <li>XNOR is the <strong>equivalence gate</strong> — output is 1 when inputs are equal.</li>
+          <li>NOT gate has only 1 input; all others require 2 or more.</li>
+          <li>Active wire is shown in <strong style="color:var(--green)">green</strong> (HIGH), inactive in dim blue (LOW).</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 02 ══════════════════════ -->
+    <section class="exp-section" id="exp2">
+      <div class="exp-header">
+        <span class="exp-num-badge combo">EXP 02</span>
+        <div>
+          <div class="exp-title combo">Universal Gates — NAND &amp; NOR</div>
+          <div class="exp-subtitle">COMBINATIONAL — GATE REALIZATION</div>
+        </div>
+      </div>
+
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">AIM</div>
+          <p>Realize AND, OR, and NOT functions using only NAND gates. Then realize the same using only NOR gates. Verify outputs match the corresponding basic gate truth tables.</p>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">REALIZATION USING NAND</div>
+          <p style="margin-bottom:6px"><span style="color:var(--green);font-family:'Share Tech Mono',monospace">NOT:</span> Tie both inputs of NAND → output = A'</p>
+          <p style="margin-bottom:6px"><span style="color:var(--green);font-family:'Share Tech Mono',monospace">AND:</span> NAND → then invert with NAND-NOT → A·B</p>
+          <p><span style="color:var(--green);font-family:'Share Tech Mono',monospace">OR :</span> Invert A, invert B, then NAND them → A+B (De Morgan)</p>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">REALIZATION USING NOR</div>
+          <p style="margin-bottom:6px"><span style="color:var(--purple);font-family:'Share Tech Mono',monospace">NOT:</span> Tie both inputs of NOR → output = A'</p>
+          <p style="margin-bottom:6px"><span style="color:var(--purple);font-family:'Share Tech Mono',monospace">OR :</span> NOR → invert with NOR-NOT → A+B</p>
+          <p><span style="color:var(--purple);font-family:'Share Tech Mono',monospace">AND:</span> Invert A, invert B, then NOR them → A·B (De Morgan)</p>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">DE MORGAN'S THEOREM</div>
+          <div class="bool-box">(A · B)' = A' + B'</div>
+          <div class="bool-box">(A + B)' = A' · B'</div>
+          <p style="font-size:12px;color:var(--text2)">These laws are the mathematical foundation that makes NAND and NOR universal.</p>
+        </div>
+      </div>
+
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 2. The canvas shows a NAND-based realization layout.</li>
+          <li>To build NOT from NAND: drag a NAND gate, right-click → "Add Input Pin" is not needed — instead wire both input ports to the <strong>same INPUT</strong> node using Wire tool.</li>
+          <li>For AND from NAND: first NAND gate processes A, B → output feeds a second NAND with both inputs tied together.</li>
+          <li>Toggle input A and B using double-click. Verify the final output matches the AND truth table.</li>
+          <li>Click <strong style="color:var(--cyan)">▶▶ Auto Truth Table</strong> to verify all 4 combinations automatically.</li>
+          <li>Repeat the process with NOR gates for the NOR-based realization.</li>
+        </ol>
+      </div>
+
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>A NAND gate with tied inputs behaves as an inverter (NOT gate).</li>
+          <li>Universal gates reduce manufacturing cost — one IC type builds any logic.</li>
+          <li>NAND is more commonly used than NOR in CMOS technology due to speed.</li>
+          <li>Fanout increases with more stages; watch for signal degradation in real circuits.</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 03 ══════════════════════ -->
+    <section class="exp-section" id="exp3">
+      <div class="exp-header">
+        <span class="exp-num-badge combo">EXP 03</span>
+        <div>
+          <div class="exp-title combo">Half Adder &amp; Half Subtractor</div>
+          <div class="exp-subtitle">COMBINATIONAL — ARITHMETIC CIRCUITS</div>
+        </div>
+      </div>
+
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">AIM</div>
+          <p>Design and simulate a Half Adder that produces Sum and Carry outputs, and a Half Subtractor that produces Difference and Borrow outputs for 1-bit binary operations.</p>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">BOOLEAN EXPRESSIONS</div>
+          <p style="color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:10px;margin-bottom:8px">HALF ADDER</p>
+          <div class="bool-box green">Sum S = A ⊕ B<br>Carry C = A · B</div>
+          <p style="color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:10px;margin-bottom:8px">HALF SUBTRACTOR</p>
+          <div class="bool-box">Difference D = A ⊕ B<br>Borrow B = A' · B</div>
+        </div>
+      </div>
+
+      <div class="tt-wrap" style="margin-bottom:16px">
+        <table class="tt">
+          <thead><tr><th>A</th><th>B</th><th>Sum S</th><th>Carry C</th><th>Diff D</th><th>Borrow Bo</th></tr></thead>
+          <tbody>
+            <tr><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+            <tr><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td></tr>
+            <tr><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+            <tr><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 3. The canvas shows INPUT nodes A and B, an XOR gate (Sum), and an AND gate (Carry).</li>
+          <li>Wire INPUT A and B to both the XOR and AND gate inputs using the Wire tool (W key).</li>
+          <li>Connect the XOR output to the OUTPUT node labeled S (Sum).</li>
+          <li>Connect the AND output to the OUTPUT node labeled C (Carry).</li>
+          <li>Double-click A and B to toggle. Verify: when A=1, B=1 → Sum=0, Carry=1 (binary 10 = decimal 2).</li>
+          <li>For Half Subtractor: replace AND with a NOT-A AND B configuration for the Borrow output.</li>
+          <li>Use Auto Truth Table to verify all 4 rows simultaneously.</li>
+        </ol>
+      </div>
+
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>Called "half" because it cannot accept a carry-in from a previous stage.</li>
+          <li>XOR gate naturally produces the Sum bit; AND gate produces the Carry bit.</li>
+          <li>A=1, B=1 gives Sum=0, Carry=1 representing binary result 10 (decimal 2).</li>
+          <li>Borrow is 1 only when A=0, B=1 (subtracting 1 from 0 requires borrowing).</li>
+          <li>Circuit uses exactly 2 gates — minimum possible for 1-bit addition.</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 04 ══════════════════════ -->
+    <section class="exp-section" id="exp4">
+      <div class="exp-header">
+        <span class="exp-num-badge combo">EXP 04</span>
+        <div>
+          <div class="exp-title combo">Full Adder &amp; Full Subtractor</div>
+          <div class="exp-subtitle">COMBINATIONAL — CASCADEABLE ARITHMETIC</div>
+        </div>
+      </div>
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">AIM</div>
+          <p>Implement a Full Adder with carry-in input enabling multi-bit cascading, and a Full Subtractor with borrow-in input. Verify all 8 input combinations.</p>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">BOOLEAN EXPRESSIONS</div>
+          <div class="bool-box green">Sum S = A ⊕ B ⊕ Cin<br>Cout = (A·B) + (B·Cin) + (A·Cin)</div>
+        </div>
+        <div class="exp-card full-card">
+          <div class="exp-card-title">TRUTH TABLE — FULL ADDER (3 inputs → 8 rows)</div>
+          <div class="tt-wrap">
+            <table class="tt">
+              <thead><tr><th>A</th><th>B</th><th>Cin</th><th>Sum S</th><th>Cout</th></tr></thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>0</td><td>0</td><td>1</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td>0</td><td>1</td><td>0</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td>0</td><td>1</td><td>1</td><td class="zero">0</td><td class="one">1</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td class="zero">0</td><td class="one">1</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td class="zero">0</td><td class="one">1</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td><td class="one">1</td><td class="one">1</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 4. Three INPUT gates (A, B, Cin) are present.</li>
+          <li>Stage 1: Wire A and B into XOR1 (intermediate P) and AND1 (intermediate Q).</li>
+          <li>Stage 2: Wire P and Cin into XOR2 → this gives final Sum output S.</li>
+          <li>Wire P and Cin into AND2 (intermediate R). Wire Q and R into an OR gate → this gives Cout.</li>
+          <li>Toggle A, B, Cin via double-click and verify all 8 combinations using Auto Truth Table.</li>
+          <li>Critical test: A=1, B=1, Cin=1 → Sum=1, Cout=1 (represents decimal 3 = binary 11).</li>
+        </ol>
+      </div>
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>Full Adder = two Half Adders + an OR gate for the carry.</li>
+          <li>Carry-out (Cout) of one stage becomes Carry-in (Cin) of the next — enabling cascading.</li>
+          <li>Standard building block of all multi-bit binary adders.</li>
+          <li>Uses 5 gates total: 2 XOR, 2 AND, 1 OR.</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 05 ══════════════════════ -->
+    <section class="exp-section" id="exp5">
+      <div class="exp-header">
+        <span class="exp-num-badge combo">EXP 05</span>
+        <div>
+          <div class="exp-title combo">4-bit Ripple Carry Adder</div>
+          <div class="exp-subtitle">COMBINATIONAL — MULTI-BIT ARITHMETIC</div>
+        </div>
+      </div>
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">AIM</div>
+          <p>Chain four Full Adders to add two 4-bit numbers A[3:0] and B[3:0] producing a 5-bit output (Cout, S3, S2, S1, S0).</p>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">STRUCTURE</div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.8">FA0: A0+B0+0 → S0, C0<br>FA1: A1+B1+C0 → S1, C1<br>FA2: A2+B2+C1 → S2, C2<br>FA3: A3+B3+C2 → S3, Cout</p>
+        </div>
+      </div>
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 5. Set all input bits A3–A0 and B3–B0 by double-clicking their INPUT nodes.</li>
+          <li>The Cin of FA0 is permanently wired to 0.</li>
+          <li>Cout of each FA feeds the Cin of the next FA to the left.</li>
+          <li>Example: Set A=0111 (7) and B=0001 (1). Expected output: S=1000 (8), Cout=0.</li>
+          <li>Try A=1111 (15) + B=0001 (1) = 10000 → Cout=1, S=0000 (overflow).</li>
+          <li>Step through the simulation using the STEP button to observe carry propagation.</li>
+        </ol>
+      </div>
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>Critical path delay = 4 × (Full Adder delay) due to sequential carry propagation.</li>
+          <li>Carry Look-Ahead Adder (CLA) eliminates this by computing all carries simultaneously.</li>
+          <li>IC 74LS83 is a 4-bit binary adder used in real hardware.</li>
+          <li>Maximum sum for 4-bit + 4-bit is 30 (1111 + 1111 = 11110).</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 06 ══════════════════════ -->
+    <section class="exp-section" id="exp6">
+      <div class="exp-header">
+        <span class="exp-num-badge combo">EXP 06</span>
+        <div>
+          <div class="exp-title combo">BCD Adder Design</div>
+          <div class="exp-subtitle">COMBINATIONAL — DECIMAL ARITHMETIC</div>
+        </div>
+      </div>
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">AIM</div>
+          <p>Add two BCD digits (0–9) and produce a valid BCD result. Apply 0110 correction when the binary sum exceeds 9 or a carry is generated.</p>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">CORRECTION LOGIC</div>
+          <div class="bool-box">Correct = C + (S3·S2) + (S3·S1)</div>
+          <p style="font-size:12px;color:var(--text2)">When Correct=1, add 0110 (6) to the binary sum to skip invalid codes 1010–1111.</p>
+        </div>
+      </div>
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 6. Enter BCD digits A (A3–A0) and B (B3–B0) using INPUT nodes.</li>
+          <li>Stage 1 binary adder produces intermediate sum S[3:0] and carry C.</li>
+          <li>Observe the correction detect logic — if sum &gt; 9, green wire on the correction gate.</li>
+          <li>Stage 2 adder adds 0110 when correction is needed.</li>
+          <li>Test: BCD 5 (0101) + BCD 7 (0111) = binary 12 (1100). Correction adds 0110 → result is 10010 = BCD 1 and 2 = decimal 12.</li>
+        </ol>
+      </div>
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>BCD uses 4 bits per decimal digit; codes 1010–1111 are invalid and never occur in output.</li>
+          <li>Correction value 0110 (6) skips the 6 invalid codes (10–15).</li>
+          <li>Used in calculators, ATMs, and financial computing where decimal precision is mandatory.</li>
+          <li>Two 4-bit adder stages are required — first for binary sum, second for correction.</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 07 ══════════════════════ -->
+    <section class="exp-section" id="exp7">
+      <div class="exp-header">
+        <span class="exp-num-badge combo">EXP 07</span>
+        <div>
+          <div class="exp-title combo">Code Converters — BCD / Gray</div>
+          <div class="exp-subtitle">COMBINATIONAL — CODE CONVERSION</div>
+        </div>
+      </div>
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">BINARY TO GRAY CODE</div>
+          <div class="bool-box green">G3 = B3<br>G2 = B3 ⊕ B2<br>G1 = B2 ⊕ B1<br>G0 = B1 ⊕ B0</div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">GRAY TO BINARY</div>
+          <div class="bool-box">B3 = G3<br>B2 = B3 ⊕ G2<br>B1 = B2 ⊕ G1<br>B0 = B1 ⊕ G0</div>
+        </div>
+        <div class="exp-card full-card">
+          <div class="exp-card-title">BINARY vs GRAY CODE TABLE (0–7)</div>
+          <div class="tt-wrap">
+            <table class="tt">
+              <thead><tr><th>Decimal</th><th>B3</th><th>B2</th><th>B1</th><th>B0</th><th>G3</th><th>G2</th><th>G1</th><th>G0</th></tr></thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+                <tr><td>2</td><td>0</td><td>0</td><td>1</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td></tr>
+                <tr><td>3</td><td>0</td><td>0</td><td>1</td><td>1</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td>4</td><td>0</td><td>1</td><td>0</td><td>0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 7. Input nodes B3–B0 represent the 4-bit binary input.</li>
+          <li>XOR gates implement the Gray conversion: G3=B3 (BUF), G2=B3⊕B2, G1=B2⊕B1, G0=B1⊕B0.</li>
+          <li>Toggle inputs to binary values (e.g., 0110 = decimal 6) and read Gray output.</li>
+          <li>Verify that consecutive Gray codes differ by exactly 1 bit — this is the defining property.</li>
+          <li>For BCD to Excess-3: add 0011 (3) to each BCD digit — verify using the correction adder structure.</li>
+        </ol>
+      </div>
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>Gray code changes only 1 bit between consecutive values — prevents glitches in mechanical encoders.</li>
+          <li>Used extensively in Karnaugh maps for logic minimization.</li>
+          <li>Excess-3 is self-complementing: 9's complement of any BCD digit is its bit-inversion in Excess-3.</li>
+          <li>Gray code conversion uses only XOR gates — simple and fast.</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 08 ══════════════════════ -->
+    <section class="exp-section" id="exp8">
+      <div class="exp-header">
+        <span class="exp-num-badge combo">EXP 08</span>
+        <div>
+          <div class="exp-title combo">Encoders &amp; Decoders</div>
+          <div class="exp-subtitle">COMBINATIONAL — DATA ROUTING</div>
+        </div>
+      </div>
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">3-TO-8 DECODER</div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.75">Inputs: A, B, C (3 bits). Outputs: D0–D7 (8 lines). Exactly one output is active for each input combination. Each output = minterm of inputs.</p>
+          <div class="bool-box" style="margin-top:8px;font-size:10px">D0 = A'B'C' &nbsp; D1 = A'B'C<br>D2 = A'BC' &nbsp; D3 = A'BC<br>D4 = AB'C' &nbsp; D5 = AB'C<br>D6 = ABC' &nbsp;&nbsp; D7 = ABC</div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">PRIORITY ENCODER (8-TO-3)</div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.75">Converts active input line to 3-bit binary output. If multiple inputs active, highest-numbered input takes priority. Essential for interrupt controllers.</p>
+        </div>
+      </div>
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 8. Three INPUT nodes A, B, C feed the decoder NAND gates.</li>
+          <li>Toggle A, B, C to binary value 101 (decimal 5). Verify only D5 output glows green.</li>
+          <li>For each of the 8 combinations (000–111), confirm exactly one output line is active.</li>
+          <li>Switch to encoder mode: activate only one input line and verify the 3-bit binary output.</li>
+          <li>For priority encoder testing: activate multiple inputs simultaneously and confirm highest takes priority.</li>
+        </ol>
+      </div>
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>A 3-to-8 decoder has 3 inputs and 2³ = 8 outputs.</li>
+          <li>Active-LOW decoders use NAND gates; active-HIGH use AND gates.</li>
+          <li>Enable pin allows cascading: two 3-to-8 decoders → one 4-to-16 decoder.</li>
+          <li>Used in memory address decoding and 7-segment display drivers.</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 09 ══════════════════════ -->
+    <section class="exp-section" id="exp9">
+      <div class="exp-header">
+        <span class="exp-num-badge combo">EXP 09</span>
+        <div>
+          <div class="exp-title combo">MUX &amp; DEMUX</div>
+          <div class="exp-subtitle">COMBINATIONAL — DATA SELECTION</div>
+        </div>
+      </div>
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">4:1 MUX EXPRESSION</div>
+          <div class="bool-box green" style="font-size:10px">Y = S1'S0'·I0 + S1'S0·I1<br>&nbsp;&nbsp;&nbsp;&nbsp;+ S1S0'·I2 + S1S0·I3</div>
+          <p style="font-size:12px;color:var(--text2);margin-top:8px">Select lines S1, S0 choose which data input (I0–I3) passes to output Y.</p>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">SELECT LINE TABLE</div>
+          <div class="tt-wrap">
+            <table class="tt">
+              <thead><tr><th>S1</th><th>S0</th><th>Output Y</th></tr></thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td style="color:var(--cyan)">I0</td></tr>
+                <tr><td>0</td><td>1</td><td style="color:var(--cyan)">I1</td></tr>
+                <tr><td>1</td><td>0</td><td style="color:var(--cyan)">I2</td></tr>
+                <tr><td>1</td><td>1</td><td style="color:var(--cyan)">I3</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 9. Six INPUT nodes: I0–I3 (data) and S0, S1 (select).</li>
+          <li>Set S1=0, S0=0 to select I0. Toggle I0 and observe output Y following I0's value.</li>
+          <li>Set S1=1, S0=1 to select I3. Toggle I3 and confirm Y follows I3.</li>
+          <li>To implement a function: tie data inputs to 0 or 1 according to the truth table minterm positions.</li>
+          <li>For DEMUX: set data input D and change select lines to route D to different outputs.</li>
+        </ol>
+      </div>
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>MUX can implement any Boolean function of n+1 variables using a 2ⁿ:1 MUX.</li>
+          <li>DEMUX is essentially a decoder with a data input — same hardware, different use.</li>
+          <li>IC 74LS153 is a dual 4:1 MUX; IC 74LS139 is a dual 2:4 DEMUX/decoder.</li>
+          <li>Used in time-division multiplexing to share one wire among multiple signals.</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 10 ══════════════════════ -->
+    <section class="exp-section" id="exp10">
+      <div class="exp-header">
+        <span class="exp-num-badge seq">EXP 10</span>
+        <div>
+          <div class="exp-title seq">SR Flip-Flop (NAND)</div>
+          <div class="exp-subtitle">SEQUENTIAL — BISTABLE MEMORY ELEMENT</div>
+        </div>
+      </div>
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">STATE TABLE</div>
+          <div class="tt-wrap">
+            <table class="tt">
+              <thead><tr><th>S̄</th><th>R̄</th><th>Q</th><th>Q'</th><th>State</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>1</td><td colspan="2" style="color:var(--text-dim)">No change</td><td style="color:var(--cyan)">HOLD</td></tr>
+                <tr><td class="zero">0</td><td>1</td><td class="one">1</td><td class="zero">0</td><td style="color:var(--green)">SET</td></tr>
+                <tr><td>1</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td style="color:var(--orange)">RESET</td></tr>
+                <tr><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td style="color:var(--red)">FORBIDDEN</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">CIRCUIT DESCRIPTION</div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.75">Two cross-coupled NAND gates. Gate 1 takes S̄ and Q' as inputs → outputs Q. Gate 2 takes R̄ and Q as inputs → outputs Q'. Active-LOW inputs (0 activates function).</p>
+        </div>
+      </div>
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 10. Two INPUT nodes S and R, two NAND gates cross-coupled, two OUTPUT nodes Q and Q'.</li>
+          <li><strong style="color:var(--green)">SET operation:</strong> Set S=0, R=1. Verify Q goes to 1 and Q' goes to 0.</li>
+          <li>Release S back to 1 (S=1, R=1). Verify Q remains 1 — this demonstrates memory.</li>
+          <li><strong style="color:var(--orange)">RESET operation:</strong> Set R=0, S=1. Verify Q goes to 0 and Q' goes to 1.</li>
+          <li>Release R back to 1. Verify Q remains 0 — memory retained again.</li>
+          <li>Observe the waveform in the Wave panel showing Q holding its state between toggles.</li>
+          <li><strong style="color:var(--red)">Avoid:</strong> Setting both S=0 and R=0 simultaneously — forbidden state.</li>
+        </ol>
+      </div>
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>First sequential circuit: output depends on both current inputs AND previous state.</li>
+          <li>SR NAND latch uses active-LOW inputs: S̄=0 sets, R̄=0 resets.</li>
+          <li>Forbidden state (S=0, R=0) forces Q=Q'=1, violating complementary property.</li>
+          <li>Used to debounce mechanical switches — eliminates contact bounce noise.</li>
+          <li>SR latch is the building block of all other flip-flops.</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 11 ══════════════════════ -->
+    <section class="exp-section" id="exp11">
+      <div class="exp-header">
+        <span class="exp-num-badge seq">EXP 11</span>
+        <div>
+          <div class="exp-title seq">JK &amp; D Flip-Flops</div>
+          <div class="exp-subtitle">SEQUENTIAL — CLOCKED MEMORY ELEMENTS</div>
+        </div>
+      </div>
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">JK FLIP-FLOP STATE TABLE</div>
+          <div class="tt-wrap">
+            <table class="tt">
+              <thead><tr><th>J</th><th>K</th><th>Qn+1</th><th>Operation</th></tr></thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td style="color:var(--cyan)">Qn</td><td style="color:var(--text-dim)">No change</td></tr>
+                <tr><td>0</td><td>1</td><td class="zero">0</td><td style="color:var(--orange)">RESET</td></tr>
+                <tr><td>1</td><td>0</td><td class="one">1</td><td style="color:var(--green)">SET</td></tr>
+                <tr><td>1</td><td>1</td><td style="color:var(--purple)">Qn'</td><td style="color:var(--purple)">TOGGLE</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">D FLIP-FLOP</div>
+          <div class="bool-box green">Qn+1 = D (on clock edge)</div>
+          <p style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.75">D flip-flop samples and latches data input D on each rising clock edge. Eliminates forbidden state by internally connecting D to J and D' to K.</p>
+        </div>
+      </div>
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 11. INPUT nodes: J, K, CLK for JK flip-flop.</li>
+          <li>Set J=1, K=0, then toggle CLK (0→1). Observe Q goes to 1 (SET operation).</li>
+          <li>Set J=0, K=1, toggle CLK. Observe Q goes to 0 (RESET operation).</li>
+          <li>Set J=1, K=1, toggle CLK repeatedly. Observe Q toggling with each clock pulse.</li>
+          <li>For D flip-flop: connect D input and clock it. Q should follow D after each clock edge.</li>
+          <li>Use the STEP button to advance clock one tick at a time and observe state changes.</li>
+          <li>View the waveform in the Wave tab to see CLK, Q, Q' timing relationships.</li>
+        </ol>
+      </div>
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>JK flip-flop resolves the SR forbidden state — J=K=1 gives toggle instead of invalid output.</li>
+          <li>Race-around condition occurs in level-triggered JK when J=K=1 and clock stays HIGH.</li>
+          <li>D flip-flop is the most common storage element in synchronous digital design.</li>
+          <li>T flip-flop (toggle) is a JK with J=K=1 permanently — used in frequency dividers.</li>
+          <li>One D flip-flop = one bit of register storage in a CPU.</li>
+        </ul>
+      </div>
+    </section>
+    <div class="exp-sep"></div>
+
+    <!-- ══════════════════════ EXP 12 ══════════════════════ -->
+    <section class="exp-section" id="exp12">
+      <div class="exp-header">
+        <span class="exp-num-badge seq">EXP 12</span>
+        <div>
+          <div class="exp-title seq">Counters &amp; Registers</div>
+          <div class="exp-subtitle">SEQUENTIAL — STATE MACHINES</div>
+        </div>
+      </div>
+      <div class="exp-grid">
+        <div class="exp-card">
+          <div class="exp-card-title">3-BIT RIPPLE COUNTER SEQUENCE</div>
+          <div class="tt-wrap">
+            <table class="tt">
+              <thead><tr><th>Clock</th><th>Q2</th><th>Q1</th><th>Q0</th><th>Decimal</th></tr></thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td>0</td><td style="color:var(--text-dim)">0</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td>1</td><td style="color:var(--text-dim)">1</td></tr>
+                <tr><td>2</td><td>0</td><td>1</td><td>0</td><td style="color:var(--text-dim)">2</td></tr>
+                <tr><td>3</td><td>0</td><td>1</td><td>1</td><td style="color:var(--text-dim)">3</td></tr>
+                <tr><td>4</td><td>1</td><td>0</td><td>0</td><td style="color:var(--text-dim)">4</td></tr>
+                <tr><td>5</td><td>1</td><td>0</td><td>1</td><td style="color:var(--text-dim)">5</td></tr>
+                <tr><td>6</td><td>1</td><td>1</td><td>0</td><td style="color:var(--text-dim)">6</td></tr>
+                <tr><td>7</td><td>1</td><td>1</td><td>1</td><td style="color:var(--text-dim)">7</td></tr>
+                <tr><td>8</td><td>0</td><td>0</td><td>0</td><td style="color:var(--cyan)">0 (wrap)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="exp-card">
+          <div class="exp-card-title">SHIFT REGISTER (SIPO)</div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.75">4 D flip-flops in series. Serial data enters FF1. On each clock, each FF captures output of previous FF.</p>
+          <div class="bool-box green" style="margin-top:10px;font-size:10px">After 4 clocks with input 1,0,1,1:<br>Q3 Q2 Q1 Q0 = 1 0 1 1</div>
+          <p style="font-size:11px;color:var(--text-dim);margin-top:8px">SIPO = Serial-In Parallel-Out<br>SISO = Serial-In Serial-Out<br>PIPO = Parallel-In Parallel-Out</p>
+        </div>
+      </div>
+      <div class="exp-card" style="margin-bottom:16px">
+        <div class="exp-card-title">HOW TO OPERATE</div>
+        <ol class="steps-list">
+          <li>Load Experiment 12. CLK and D-in INPUT nodes are present.</li>
+          <li>For counter: press STEP repeatedly. Observe Q2, Q1, Q0 incrementing in binary from 000 to 111.</li>
+          <li>After step 8, verify counter wraps back to 000 (modulo-8 behavior).</li>
+          <li>Switch to Auto-Sim for automatic clocking. Observe waveform in Wave tab.</li>
+          <li>For shift register: set D-in to a data bit (0 or 1), press STEP 4 times loading 4 bits.</li>
+          <li>After 4 steps, read Q3–Q0 as the parallel output of the 4 loaded bits.</li>
+          <li>Try loading the pattern 1011 serially and verify parallel output equals 1011 after 4 clock steps.</li>
+        </ol>
+      </div>
+      <div class="key-points">
+        <div class="key-points-title">KEY POINTS</div>
+        <ul>
+          <li>Ripple counter is asynchronous — flip-flops clock at different times causing glitches.</li>
+          <li>Synchronous counters (all FFs clocked simultaneously) are glitch-free and faster.</li>
+          <li>3-bit counter counts modulo-8; add NAND reset detection for modulo-N counter.</li>
+          <li>Shift registers convert between serial and parallel data formats.</li>
+          <li>IC 74HC194 is a universal shift register with all four modes (SISO, SIPO, PISO, PIPO).</li>
+          <li>Counters form the basis of program counters, timers, and frequency dividers in CPUs.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div><!-- end content -->
+</div><!-- end layout -->
+
+<footer>
+  <span>SRM VoxLogic Lab Manual — Digital Logic Design</span>
+  <span>SRM Institute of Science and Technology © 2026</span>
+</footer>
+
+<script>
+  // Highlight active nav item on scroll
+  const sections = document.querySelectorAll('.exp-section');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(item => item.classList.remove('active'));
+        const id = entry.target.id;
+        const active = document.querySelector(`.nav-item[href="#${id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

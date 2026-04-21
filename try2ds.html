@@ -363,6 +363,29 @@
       width: 2px
     }
 
+
+
+    .docs-btn {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text-dim);
+      padding: 3px 8px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .15s;
+      text-decoration: none;
+      letter-spacing: 1px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .docs-btn:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
     .sidebar-gates::-webkit-scrollbar-thumb {
       background: var(--border2)
     }
@@ -1630,6 +1653,7 @@
     <div class="logo">SRM<span class="accent">VoxLogic</span></div>
     <div class="hcenter">SRM VOXLOGIC // DIGITAL LOGIC DESIGN SIMULATOR</div>
     <div class="hright">
+      <a class="hbtn" href="manual.html" target="_blank" style="text-decoration:none;">📘 MANUAL</a>
       <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Light/Dark">🌙</button>
       <button class="hbtn" id="voiceBtn" onclick="toggleVoice()">◉ VOICE</button>
       <button class="hbtn" id="micBtn" onclick="startVoiceRecognition()">🎙 MIC</button>
@@ -2152,8 +2176,14 @@
         div.id = `exp-${exp.id}`;
         const tagC = { basic: 'tag-basic', combo: 'tag-combo', seq: 'tag-seq' }[exp.tag] || 'tag-basic';
         div.innerHTML = `<div class="exp-num">EXP ${String(exp.id).padStart(2, '0')}</div>
-    <div class="exp-name">${exp.name.replace('\n', '<br>')}</div>
-    <span class="exp-tag ${tagC}">${exp.tag.toUpperCase()}</span>`;
+<div class="exp-name">${exp.name.replace('\n', '<br>')}</div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
+  <span class="exp-tag ${tagC}">${exp.tag.toUpperCase()}</span>
+  <a class="docs-btn" href="manual.html#exp-${exp.id}" target="_blank" 
+     title="Open documentation" onclick="event.stopPropagation()">
+    📄 →
+  </a>
+</div>`;
         div.onclick = () => loadExperiment(exp.id);
         list.appendChild(div);
       });
