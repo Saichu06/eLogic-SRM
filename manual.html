@@ -1573,7 +1573,8 @@
     </div>
     <div class="header-right">
       <span class="header-badge badge-live">INTERACTIVE</span>
-      <button class="search-btn" onclick="window.location.href='try2ds.html'">⌘ Start Lab →</button>
+      <!-- Replace the existing search-btn button in the header -->
+      <button class="search-btn" id="startLabBtn" onclick="startLab()">⌘ Start Lab →</button>
     </div>
   </header>
 
@@ -3910,6 +3911,18 @@
       fb.style.color = result === 'correct' ? 'var(--green)' : 'var(--red)';
     }
 
+    function startLab() {
+      // Find which experiment is currently active/visible
+      const activeNav = document.querySelector('.nav-item.active');
+      if (activeNav) {
+        const href = activeNav.getAttribute('href'); // e.g. "#exp1"
+        const expNum = href.replace('#exp', '');
+        window.location.href = `try2ds.html?exp=${expNum}`;
+      } else {
+        window.location.href = 'try2ds.html';
+      }
+    }
+
     // ── TOOLTIP HINT
     const hint = document.createElement('div');
     hint.style.cssText = 'position:fixed;bottom:100px;right:24px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:6px;padding:8px 14px;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--cyan);z-index:400;letter-spacing:1px;pointer-events:none;opacity:0;transition:opacity .4s';
@@ -3917,6 +3930,35 @@
     document.body.appendChild(hint);
     setTimeout(() => { hint.style.opacity = '1'; }, 2000);
     setTimeout(() => { hint.style.opacity = '0'; }, 6000);
+
+
+    // Add this INSIDE the existing <script> tag, preferably at the top or bottom
+
+    // ── HASH NAVIGATION FOR EXPERIMENTS ──
+    function scrollToExperiment() {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#exp-')) {
+        const targetElement = document.querySelector(hash);
+        if (targetElement) {
+          // Small delay to ensure page is fully loaded
+          setTimeout(() => {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Optional: Add a highlight effect
+            targetElement.style.transition = 'all 0.3s';
+            targetElement.style.borderLeft = '3px solid var(--green)';
+            setTimeout(() => {
+              targetElement.style.borderLeft = '';
+            }, 2000);
+          }, 300);
+        }
+      }
+    }
+
+    // Run on page load
+    window.addEventListener('load', scrollToExperiment);
+
+    // Also run when hash changes (if user clicks another link)
+    window.addEventListener('hashchange', scrollToExperiment);
   </script>
 </body>
 

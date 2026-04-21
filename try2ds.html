@@ -2149,6 +2149,15 @@
       loadExperiment(1);
       startAutoSim(); // Start auto-sim on load
       notify('SRM VoxLogic ready — drag gates onto canvas', 'ok');
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const expParam = urlParams.get('exp');
+      if (expParam) {
+        const expId = parseInt(expParam);
+        if (expId >= 1 && expId <= 12) {
+          loadExperiment(expId);
+        }
+      }
     }
 
     function resizeCanvas() {
@@ -2179,7 +2188,7 @@
 <div class="exp-name">${exp.name.replace('\n', '<br>')}</div>
 <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
   <span class="exp-tag ${tagC}">${exp.tag.toUpperCase()}</span>
-  <a class="docs-btn" href="manual.html#exp-${exp.id}" target="_blank" 
+  <a class="docs-btn" href="manual.html#exp${exp.id}" target="_blank" 
      title="Open documentation" onclick="event.stopPropagation()">
     📄 →
   </a>
