@@ -36,6 +36,35 @@
       --radius: 6px;
     }
 
+    /* Light theme overrides - MUST be outside :root */
+    [data-theme="light"] {
+      --bg: #f0f4f8;
+      --bg2: #e8edf2;
+      --panel: #ffffff;
+      --panel2: #f8fafc;
+      --panel3: #eef2f6;
+      --border: #d0dce8;
+      --border2: #b8cce0;
+      --border3: #9ab0c8;
+      --cyan: #0077aa;
+      --cyan2: #005f88;
+      --cyan3: #004466;
+      --green: #008844;
+      --green2: #006633;
+      --orange: #cc4400;
+      --yellow: #cc8800;
+      --red: #cc1133;
+      --purple: #7755cc;
+      --pink: #cc5599;
+      --teal: #008877;
+      --text: #1a2d42;
+      --text2: #3a5878;
+      --text3: #5a7898;
+      --text-dim: #8aaac0;
+      --glow-cyan: 0 0 10px rgba(0, 119, 170, 0.15);
+      --glow-green: 0 0 10px rgba(0, 136, 68, 0.15);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -44,6 +73,58 @@
 
     html {
       scroll-behavior: smooth;
+    }
+
+    /* ── EXPERIMENT OUTPUT IMAGE ── */
+    .exp-output {
+      margin: 20px 0;
+      background: var(--panel2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .exp-output-header {
+      background: var(--panel);
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .exp-output-header::before {
+      content: '🖻';
+      font-size: 12px;
+    }
+
+    .exp-output-image {
+      padding: 16px;
+      text-align: center;
+      background: var(--bg);
+    }
+
+    .exp-output-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .exp-output-caption {
+      padding: 8px 16px;
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      color: var(--text3);
+      text-align: center;
+      letter-spacing: 1px;
     }
 
     body {
@@ -150,7 +231,7 @@
       top: 0;
       z-index: 1000;
       height: 60px;
-      background: rgba(4, 7, 12, 0.92);
+      background: var(--panel);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border2);
       display: flex;
@@ -177,19 +258,19 @@
     }
 
     .logo-icon {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
 
-.logo-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
+    .logo-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
 
     .logo-text {
       font-family: 'Syne', sans-serif;
@@ -280,7 +361,7 @@
     /* ── SIDEBAR ── */
     .sidenav {
       width: 260px;
-      background: rgba(8, 14, 24, 0.95);
+      background: var(--panel2);
       border-right: 1px solid var(--border);
       position: sticky;
       top: 60px;
@@ -359,6 +440,23 @@
     .nav-item:hover {
       background: rgba(0, 212, 255, 0.04);
       border-left-color: var(--cyan2);
+    }
+
+    .theme-toggle {
+      background: var(--panel2);
+      border: 1px solid var(--border2);
+      color: var(--text3);
+      padding: 7px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: all .2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: rgba(0, 212, 255, 0.05);
     }
 
     .nav-item.active {
@@ -1562,7 +1660,7 @@
     </div>
     <div class="header-right">
       <span class="header-badge badge-live">INTERACTIVE</span>
-      <!-- Replace the existing search-btn button in the header -->
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
       <button class="search-btn" id="startLabBtn" onclick="startLab()">⌘ Start Lab →</button>
     </div>
   </header>
@@ -2082,6 +2180,16 @@
           <div class="quiz-feedback" id="qf1"></div>
         </div>
 
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 01</div>
+          <div class="exp-output-image">
+            <img src="images/exp1.png" alt="Experiment 1 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">All 7 basic gates with A=1, B=0 showing outputs: AND=0, OR=1, NOT A=0, NAND=1,
+            NOR=0, XOR=1, XNOR=0</div>
+        </div>
+
         <div class="exp-card" style="margin-bottom:16px">
           <div class="exp-card-title">HOW TO OPERATE</div>
           <ol class="steps-list">
@@ -2261,6 +2369,16 @@
           </p>
         </div>
 
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 02</div>
+          <div class="exp-output-image">
+            <img src="images/exp2.png" alt="Experiment 2 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">Universal gates: NOT, AND, OR implemented using only NAND gates. A=1, B=1
+            shows outputs.</div>
+        </div>
+
         <div class="exp-card" style="margin-bottom:16px">
           <div class="exp-card-title">HOW TO OPERATE</div>
           <ol class="steps-list">
@@ -2400,6 +2518,15 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 03</div>
+          <div class="exp-output-image">
+            <img src="images/exp3.png" alt="Experiment 3 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">Half Adder: XOR for Sum, AND for Carry. A=1, B=1 → Sum=0, Carry=1</div>
         </div>
 
         <div class="exp-card" style="margin-bottom:16px">
@@ -2555,6 +2682,15 @@
           </div>
         </div>
 
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 04</div>
+          <div class="exp-output-image">
+            <img src="images/exp4.png" alt="Experiment 4 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">Full Adder: Two XORs, two ANDs, one OR. A=1, B=1, Cin=1 → Sum=1, Cout=1</div>
+        </div>
+
         <div class="exp-card" style="margin-bottom:16px">
           <div class="exp-card-title">HOW TO OPERATE</div>
           <ol class="steps-list">
@@ -2688,6 +2824,15 @@
           </div>
         </div>
 
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 05</div>
+          <div class="exp-output-image">
+            <img src="images/exp5.png" alt="Experiment 5 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">4-bit Ripple Carry Adder: 8 inputs, 5 outputs showing 7+1=8 (01000)</div>
+        </div>
+
         <div class="exp-card" style="margin-bottom:16px">
           <div class="exp-card-title">HOW TO OPERATE</div>
           <ol class="steps-list">
@@ -2808,6 +2953,15 @@
               </tbody>
             </table>
           </div>
+        </div>
+
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 06</div>
+          <div class="exp-output-image">
+            <img src="images/exp6.png" alt="Experiment 6 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">BCD Adder: 5+7=12 showing correction logic active (Carry=1, BCD=0010)</div>
         </div>
 
         <div class="exp-card" style="margin-bottom:16px">
@@ -2978,6 +3132,15 @@
           </div>
         </div>
 
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 07</div>
+          <div class="exp-output-image">
+            <img src="images/exp7.png" alt="Experiment 7 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">Binary to Gray Code: B3B2B1B0=0110 (6) → Gray=0101</div>
+        </div>
+
         <div class="exp-card" style="margin-bottom:16px">
           <div class="exp-card-title">HOW TO OPERATE</div>
           <ol class="steps-list">
@@ -3073,6 +3236,15 @@
             <div style="margin-top:8px;font-size:11px;color:var(--text3)">The 74LS138 has 3 enable pins (2 active-LOW, 1
               active-HIGH) for easy cascading.</div>
           </div>
+        </div>
+
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 08</div>
+          <div class="exp-output-image">
+            <img src="images/exp8.png" alt="Experiment 8 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">3-to-8 Decoder: A=1,B=0,C=1 (binary 101) activates only D5 output</div>
         </div>
 
         <div class="exp-card" style="margin-bottom:16px">
@@ -3203,6 +3375,15 @@
           </div>
         </div>
 
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 09</div>
+          <div class="exp-output-image">
+            <img src="images/exp9.png" alt="Experiment 9 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">4:1 Multiplexer: S1=0,S0=0 selects I0; output follows I0</div>
+        </div>
+
         <div class="exp-card" style="margin-bottom:16px">
           <div class="exp-card-title">HOW TO OPERATE</div>
           <ol class="steps-list">
@@ -3328,6 +3509,17 @@
             1,1, the latch races to one stable state — but which state it ends in is <strong>unpredictable</strong>. In
             real circuits, this causes timing-dependent bugs that are extremely hard to debug. Always avoid S=R=0 in
             NAND SR latches.</p>
+        </div>
+
+        <!-- OUTPUT IMAGE -->
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 10</div>
+          <div class="exp-output-image">
+            <img src="images/exp10.png" alt="Experiment 10 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">SR NAND Latch: S=0,R=1 (SET) → Q=1, Q'=0; state held after S returns to 1
+          </div>
         </div>
 
         <div class="exp-card" style="margin-bottom:16px">
@@ -3504,6 +3696,15 @@
             <p style="font-size:11px;color:var(--orange);margin-top:6px">⚠ All modern FFs are edge-triggered to avoid
               this.</p>
           </div>
+        </div>
+
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 11</div>
+          <div class="exp-output-image">
+            <img src="images/exp11.png" alt="Experiment 11 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">JK Flip-Flop: J=1,K=1 toggles Q on each clock edge</div>
         </div>
 
         <div class="exp-card" style="margin-bottom:16px">
@@ -3752,6 +3953,16 @@
           </div>
         </div>
 
+        <!-- OUTPUT IMAGE -->
+        <div class="exp-output">
+          <div class="exp-output-header">SIMULATOR OUTPUT — EXPERIMENT 12</div>
+          <div class="exp-output-image">
+            <img src="images/exp12.png" alt="Experiment 12 Circuit Output" onerror="this.src='images/placeholder.png'">
+          </div>
+          <div class="exp-output-caption">3-bit Ripple Counter: Clock pulses showing Q2Q1Q0 counting
+            000→001→010→011→100→101→110→111→000</div>
+        </div>
+
         <div class="exp-card" style="margin-bottom:16px">
           <div class="exp-card-title">HOW TO OPERATE</div>
           <ol class="steps-list">
@@ -3943,11 +4154,46 @@
       }
     }
 
-    // Run on page load
-    window.addEventListener('load', scrollToExperiment);
+    // ── LIGHT/DARK THEME TOGGLE ──
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
 
-    // Also run when hash changes (if user clicks another link)
-    window.addEventListener('hashchange', scrollToExperiment);
+      if (isDark) {
+        html.setAttribute('data-theme', 'light');
+        document.getElementById('themeToggle').textContent = '☀️';
+        localStorage.setItem('manual-theme', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        document.getElementById('themeToggle').textContent = '🌙';
+        localStorage.setItem('manual-theme', 'dark');
+      }
+    }
+
+    // Load saved theme on page load
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem('manual-theme');
+      const html = document.documentElement;
+
+      if (savedTheme === 'light') {
+        html.setAttribute('data-theme', 'light');
+        const themeBtn = document.getElementById('themeToggle');
+        if (themeBtn) themeBtn.textContent = '☀️';
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        const themeBtn = document.getElementById('themeToggle');
+        if (themeBtn) themeBtn.textContent = '🌙';
+      }
+    }
+
+    // Call this at the end of the script, before the closing </script>
+  loadSavedTheme();
+
+  // Run on page load
+  window.addEventListener('load', scrollToExperiment);
+
+  // Also run when hash changes (if user clicks another link)
+  window.addEventListener('hashchange', scrollToExperiment);
   </script>
 </body>
 
