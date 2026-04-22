@@ -363,29 +363,6 @@
       width: 2px
     }
 
-
-
-    .docs-btn {
-      background: transparent;
-      border: 1px solid var(--border2);
-      color: var(--text-dim);
-      padding: 3px 8px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 9px;
-      border-radius: 2px;
-      cursor: pointer;
-      transition: all .15s;
-      text-decoration: none;
-      letter-spacing: 1px;
-      display: inline-flex;
-      align-items: center;
-    }
-
-    .docs-btn:hover {
-      border-color: var(--cyan);
-      color: var(--cyan);
-    }
-
     .sidebar-gates::-webkit-scrollbar-thumb {
       background: var(--border2)
     }
@@ -1523,6 +1500,246 @@
       color: var(--red)
     }
 
+    /* ── ERROR POPUP (big centred banner) ── */
+    .error-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.88);
+      background: #0e0810;
+      border: 2px solid var(--red);
+      border-radius: 8px;
+      padding: 22px 28px 18px;
+      z-index: 9000;
+      box-shadow: 0 0 40px rgba(255, 51, 85, .45), 0 0 80px rgba(255, 51, 85, .15);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s, transform .22s;
+      max-width: 340px;
+      width: 90vw;
+      text-align: center;
+    }
+
+    .error-popup.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .error-popup-icon {
+      font-size: 36px;
+      line-height: 1;
+      margin-bottom: 8px;
+      animation: errShake .5s ease-out;
+    }
+
+    .error-popup-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 13px;
+      color: var(--red);
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .error-popup-msg {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: #e08090;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .error-popup-hint {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      color: #7a3a42;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .error-popup-close {
+      background: rgba(255, 51, 85, .12);
+      border: 1px solid var(--red);
+      color: var(--red);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      padding: 6px 18px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .error-popup-close:hover {
+      background: rgba(255, 51, 85, .25);
+    }
+
+    .error-popup-bar {
+      height: 3px;
+      background: var(--red);
+      border-radius: 2px;
+      margin-top: 14px;
+      transform-origin: left;
+      animation: none;
+    }
+
+    .error-popup.show .error-popup-bar {
+      animation: errBar 4s linear forwards;
+    }
+
+    @keyframes errBar {
+      from {
+        transform: scaleX(1);
+      }
+
+      to {
+        transform: scaleX(0);
+      }
+    }
+
+    @keyframes errShake {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      20% {
+        transform: rotate(-12deg);
+      }
+
+      40% {
+        transform: rotate(12deg);
+      }
+
+      60% {
+        transform: rotate(-8deg);
+      }
+
+      80% {
+        transform: rotate(6deg);
+      }
+
+      100% {
+        transform: rotate(0deg);
+      }
+    }
+
+    /* ── BULB GLOW PULSE for ON state ── */
+    @keyframes bulbPulse {
+
+      0%,
+      100% {
+        filter: drop-shadow(0 0 6px var(--green)) drop-shadow(0 0 14px var(--green));
+      }
+
+      50% {
+        filter: drop-shadow(0 0 10px var(--green)) drop-shadow(0 0 28px var(--green));
+      }
+    }
+
+    /* ── SUCCESS POPUP ── */
+    .success-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.88);
+      background: #060e0a;
+      border: 2px solid var(--green);
+      border-radius: 8px;
+      padding: 22px 28px 18px;
+      z-index: 9000;
+      box-shadow: 0 0 40px rgba(0, 255, 136, .35), 0 0 80px rgba(0, 255, 136, .12);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s, transform .22s;
+      max-width: 340px;
+      width: 90vw;
+      text-align: center;
+    }
+
+    .success-popup.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .success-popup-icon {
+      font-size: 36px;
+      line-height: 1;
+      margin-bottom: 8px;
+      animation: successBounce .5s ease-out;
+    }
+
+    .success-popup-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 13px;
+      color: var(--green);
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .success-popup-msg {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: #80e8b0;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .success-popup-hint {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      color: #3a7a5a;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .success-popup-close {
+      background: rgba(0, 255, 136, .1);
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      padding: 6px 18px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .success-popup-close:hover {
+      background: rgba(0, 255, 136, .22);
+    }
+
+    .success-popup-bar {
+      height: 3px;
+      background: var(--green);
+      border-radius: 2px;
+      margin-top: 14px;
+      transform-origin: left;
+    }
+
+    .success-popup.show .success-popup-bar {
+      animation: errBar 4s linear forwards;
+    }
+
+    @keyframes successBounce {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      60% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
     .ctx-menu {
       position: fixed;
       background: var(--panel2);
@@ -1653,7 +1870,6 @@
     <div class="logo">SRM<span class="accent">VoxLogic</span></div>
     <div class="hcenter">SRM VOXLOGIC // DIGITAL LOGIC DESIGN SIMULATOR</div>
     <div class="hright">
-      <a class="hbtn" href="manual.html" target="_blank" style="text-decoration:none;">📘</a>
       <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Light/Dark">🌙</button>
       <button class="hbtn" id="voiceBtn" onclick="toggleVoice()">◉ VOICE</button>
       <button class="hbtn" id="micBtn" onclick="startVoiceRecognition()">🎙 MIC</button>
@@ -1661,6 +1877,10 @@
       <button class="hbtn" onclick="importCircuit()">↑ IMPORT</button>
       <button class="hbtn danger" onclick="confirmClear()">⟳ RESET</button>
       <button class="hbtn" onclick="exportCircuit()">↓ EXPORT</button>
+      <button class="hbtn" id="checkCircuitBtn" onclick="manualCheckCircuit()"
+        title="Check if circuit is wired correctly"
+        style="border-color:var(--red);color:var(--red);background:rgba(255,51,85,.07);font-weight:700;letter-spacing:1.5px">💡
+        CHECK</button>
     </div>
   </header>
 
@@ -1836,6 +2056,16 @@
               experiment. Click the context badge to send your current circuit state!
             </div>
           </div>
+          <div style="padding:5px 7px 0;display:flex;flex-wrap:wrap;gap:4px">
+            <button class="hbtn" style="font-size:8px;padding:3px 8px" onclick="quickAsk('Explain this experiment')">💡
+              Explain</button>
+            <button class="hbtn" style="font-size:8px;padding:3px 8px"
+              onclick="quickAsk('Analyze my current circuit')">🔍 My Circuit</button>
+            <button class="hbtn" style="font-size:8px;padding:3px 8px"
+              onclick="quickAsk('Give me step by step instructions for this experiment')">📋 Steps</button>
+            <button class="hbtn" style="font-size:8px;padding:3px 8px"
+              onclick="quickAsk('What are common mistakes in this experiment?')">⚠ Tips</button>
+          </div>
           <div class="ai-input-row">
             <input class="ai-inp" id="aiInput" placeholder="Ask about logic gates..."
               onkeydown="if(event.key==='Enter')sendAI()" />
@@ -1901,6 +2131,28 @@
   </div>
 
   <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)" />
+
+  <!-- ── ERROR POPUP ── -->
+  <div class="error-popup" id="errorPopup">
+    <div class="error-popup-icon">💡</div>
+    <div class="error-popup-title">CONNECTION ERROR</div>
+    <div class="error-popup-msg" id="errorPopupMsg">The bulb is not glowing — check your circuit connections.</div>
+    <div class="error-popup-hint" id="errorPopupHint">HINT: Every INPUT must be connected to a gate, and every OUTPUT
+      must receive a signal.</div>
+    <button class="error-popup-close" onclick="closeErrorPopup()">✕ DISMISS</button>
+    <div class="error-popup-bar" id="errorPopupBar"></div>
+  </div>
+
+  <!-- ── SUCCESS POPUP ── -->
+  <div class="success-popup" id="successPopup">
+    <div class="success-popup-icon">✅</div>
+    <div class="success-popup-title">CIRCUIT CORRECT!</div>
+    <div class="success-popup-msg" id="successPopupMsg">All connections are properly wired.</div>
+    <div class="success-popup-hint" id="successPopupHint">Every INPUT is connected and every gate has all its pins wired
+      up.</div>
+    <button class="success-popup-close" onclick="closeSuccessPopup()">✕ DISMISS</button>
+    <div class="success-popup-bar" id="successPopupBar"></div>
+  </div>
 
   <script>
     /* ═══════════════════════════ DATA ═══════════════════════════ */
@@ -2099,7 +2351,7 @@
     let isPanning = false, lastPan = null;
     let voiceEnabled = false, autoSim = true;
     let snapEnabled = false, GRID = 26;
-    let currentExp = 1;
+    let currentExp = 0; // 0 = blank free-build canvas
     let dragOffset = { x: 0, y: 0 };
     let lastMouse = { x: 0, y: 0 };
     let undoStack = [], redoStack = [];
@@ -2146,18 +2398,9 @@
       document.addEventListener('click', e => { if (!e.target.closest('#ctxMenu')) hideCtxMenu(); });
       document.addEventListener('keydown', onKeyDown);
       startRenderLoop();
-      loadExperiment(1);
-      startAutoSim(); // Start auto-sim on load
-      notify('SRM VoxLogic ready — drag gates onto canvas', 'ok');
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const expParam = urlParams.get('exp');
-      if (expParam) {
-        const expId = parseInt(expParam);
-        if (expId >= 1 && expId <= 12) {
-          loadExperiment(expId);
-        }
-      }
+      loadBlank();     // Start with a clean blank canvas
+      startAutoSim();
+      notify('SRM VoxLogic ready — drag gates onto canvas to begin!', 'ok');
     }
 
     function resizeCanvas() {
@@ -2179,23 +2422,43 @@
     /* ═══════════════════════════ EXPERIMENTS ═══════════════════════════ */
     function buildExpList() {
       const list = document.getElementById('expList'); list.innerHTML = '';
+
+      // ── Free Build entry (always first) ──
+      const freeDiv = document.createElement('div');
+      freeDiv.className = 'exp-item' + (currentExp === 0 ? ' active' : '');
+      freeDiv.id = 'exp-0';
+      freeDiv.innerHTML = `<div class="exp-num" style="color:var(--green)">FREE</div>
+  <div class="exp-name" style="color:var(--green)">Free Build</div>
+  <span class="exp-tag tag-basic" style="background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.2)">BLANK</span>`;
+      freeDiv.onclick = () => loadBlank();
+      list.appendChild(freeDiv);
+
       EXPERIMENTS.forEach(exp => {
         const div = document.createElement('div');
         div.className = 'exp-item' + (exp.id === currentExp ? ' active' : '');
         div.id = `exp-${exp.id}`;
         const tagC = { basic: 'tag-basic', combo: 'tag-combo', seq: 'tag-seq' }[exp.tag] || 'tag-basic';
         div.innerHTML = `<div class="exp-num">EXP ${String(exp.id).padStart(2, '0')}</div>
-<div class="exp-name">${exp.name.replace('\n', '<br>')}</div>
-<div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
-  <span class="exp-tag ${tagC}">${exp.tag.toUpperCase()}</span>
-  <a class="docs-btn" href="manual.html#exp${exp.id}" target="_blank" 
-     title="Open documentation" onclick="event.stopPropagation()">
-    📄 →
-  </a>
-</div>`;
+    <div class="exp-name">${exp.name.replace('\n', '<br>')}</div>
+    <span class="exp-tag ${tagC}">${exp.tag.toUpperCase()}</span>`;
         div.onclick = () => loadExperiment(exp.id);
         list.appendChild(div);
       });
+    }
+
+    function loadBlank() {
+      stopNarration();
+      currentExp = 0;
+      document.querySelectorAll('.exp-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('exp-0')?.classList.add('active');
+      document.getElementById('statusExp').textContent = '--';
+      document.getElementById('aiContext').textContent = 'FREE';
+      gates = []; wires = []; selectedGate = null; wireStart = null; waveHistory = {};
+      panX = 0; panY = 0; zoom = 1; updateZoomLabel();
+      rebuildAutoSimCombos();
+      simulateAll();
+      clearTTPanel(); updateStatus(); updateBooleanPanel();
+      buildVoiceScript(0);
     }
 
     function loadExperiment(id) {
@@ -2215,6 +2478,8 @@
       buildVoiceScript(id);
       if (voiceEnabled) speak(`Experiment ${id}: ${exp.name.replace('\n', ' ')}. ${exp.desc}`);
       clearTTPanel(); updateStatus(); updateBooleanPanel();
+      const badge = document.getElementById('aiContext');
+      if (badge) badge.textContent = 'EXP ' + String(id).padStart(2, '0');
     }
 
     /* ═════════════════ REBUILD AUTO-SIM INPUT COMBOS ═════════════════ */
@@ -2399,7 +2664,14 @@
       ['INPUT', 'OUTPUT'].forEach(t => {
         const chip = document.createElement('div'); chip.className = 'io-chip'; chip.draggable = true;
         chip.addEventListener('dragstart', e => { e.dataTransfer.setData('gateType', t); e.dataTransfer.effectAllowed = 'copy'; });
-        chip.innerHTML = `<span>${t}</span>`; ioC.appendChild(chip);
+        if (t === 'OUTPUT') {
+          chip.innerHTML = `<span style="font-size:18px;line-height:1">💡</span><span style="font-size:7px;letter-spacing:1px;font-family:'Share Tech Mono',monospace;color:var(--orange)">BULB</span>`;
+          chip.style.flexDirection = 'column';
+          chip.style.gap = '2px';
+        } else {
+          chip.innerHTML = `<span>${t}</span>`;
+        }
+        ioC.appendChild(chip);
       });
       const wrap = document.getElementById('canvasWrap');
       wrap.addEventListener('dragover', e => e.preventDefault());
@@ -2556,19 +2828,22 @@
       const isHov = hoveredGate && hoveredGate.id === gate.id;
       ctx.save();
 
-      const grad = ctx.createLinearGradient(x, y, x, y + h);
-      if (isDark) {
-        grad.addColorStop(0, isSel ? '#1e3550' : '#1a2c3f');
-        grad.addColorStop(1, '#0d1520');
-      } else {
-        grad.addColorStop(0, isSel ? '#ddeeff' : '#f4f8fc');
-        grad.addColorStop(1, '#e8f0f8');
+      // OUTPUT type renders as a standalone bulb — skip the rect background
+      if (type !== 'OUTPUT') {
+        const grad = ctx.createLinearGradient(x, y, x, y + h);
+        if (isDark) {
+          grad.addColorStop(0, isSel ? '#1e3550' : '#1a2c3f');
+          grad.addColorStop(1, '#0d1520');
+        } else {
+          grad.addColorStop(0, isSel ? '#ddeeff' : '#f4f8fc');
+          grad.addColorStop(1, '#e8f0f8');
+        }
+        ctx.fillStyle = grad;
+        ctx.strokeStyle = isSel ? getCSSVar('--cyan') : isHov ? getCSSVar('--cyan2') : (outputValue ? getCSSVar('--green') + '44' : getCSSVar('--border'));
+        ctx.lineWidth = (isSel ? 2 : 1) / zoom;
+        if (isSel || outputValue) { ctx.shadowColor = isSel ? getCSSVar('--cyan') : getCSSVar('--green'); ctx.shadowBlur = 12 / zoom; }
+        rrect(x, y, w, h, 5); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
       }
-      ctx.fillStyle = grad;
-      ctx.strokeStyle = isSel ? getCSSVar('--cyan') : isHov ? getCSSVar('--cyan2') : (outputValue ? getCSSVar('--green') + '44' : getCSSVar('--border'));
-      ctx.lineWidth = (isSel ? 2 : 1) / zoom;
-      if (isSel || outputValue) { ctx.shadowColor = isSel ? getCSSVar('--cyan') : getCSSVar('--green'); ctx.shadowBlur = 12 / zoom; }
-      rrect(x, y, w, h, 5); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
 
       drawGateShape(gate);
 
@@ -2597,17 +2872,20 @@
         ctx.globalAlpha = 1;
       }
 
-      const op = portPos(gate, 'output', 0);
-      ctx.beginPath(); ctx.arc(op.x, op.y, 5.5, 0, Math.PI * 2);
-      ctx.fillStyle = outputValue ? getCSSVar('--green') : (isDark ? '#0e1a28' : '#d8e8f0');
-      ctx.strokeStyle = outputValue ? getCSSVar('--green') : getCSSVar('--border2');
-      ctx.lineWidth = 1.2 / zoom; ctx.fill(); ctx.stroke();
+      // OUTPUT bulb has no output port dot — the bulb body IS the output indicator
+      if (type !== 'OUTPUT') {
+        const op = portPos(gate, 'output', 0);
+        ctx.beginPath(); ctx.arc(op.x, op.y, 5.5, 0, Math.PI * 2);
+        ctx.fillStyle = outputValue ? getCSSVar('--green') : (isDark ? '#0e1a28' : '#d8e8f0');
+        ctx.strokeStyle = outputValue ? getCSSVar('--green') : getCSSVar('--border2');
+        ctx.lineWidth = 1.2 / zoom; ctx.fill(); ctx.stroke();
 
-      ctx.fillStyle = outputValue ? getCSSVar('--green') : getCSSVar('--text-dim');
-      ctx.globalAlpha = outputValue ? .95 : .6;
-      ctx.font = `bold ${Math.max(8, 9 / zoom)}px "Share Tech Mono"`;
-      ctx.textAlign = 'left'; ctx.fillText(String(outputValue), op.x + 9 / zoom, op.y + 3.5 / zoom);
-      ctx.globalAlpha = 1;
+        ctx.fillStyle = outputValue ? getCSSVar('--green') : getCSSVar('--text-dim');
+        ctx.globalAlpha = outputValue ? .95 : .6;
+        ctx.font = `bold ${Math.max(8, 9 / zoom)}px "Share Tech Mono"`;
+        ctx.textAlign = 'left'; ctx.fillText(String(outputValue), op.x + 9 / zoom, op.y + 3.5 / zoom);
+        ctx.globalAlpha = 1;
+      }
 
       if (type === 'INPUT') {
         const v = gate.inputValues[0];
@@ -2668,14 +2946,107 @@
           ctx.fillStyle = gate.inputValues[0] ? 'rgba(0,255,136,.08)' : 'rgba(255,112,67,.06)';
           rrect(cx - sz * .75, cy - sz * .5, sz * 1.5, sz, 4); ctx.fill(); ctx.stroke(); break;
         case 'OUTPUT':
+          // ── BULB RENDERING ──────────────────────────────────────────
           const ov = gate.outputValue;
-          ctx.strokeStyle = ov ? getCSSVar('--green') : getCSSVar('--purple');
-          ctx.fillStyle = ov ? 'rgba(0,255,136,.06)' : 'rgba(199,125,255,.06)';
-          ctx.beginPath(); ctx.arc(cx, cy, sz * .58, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-          ctx.beginPath(); ctx.arc(cx, cy, sz * .2, 0, Math.PI * 2);
-          ctx.fillStyle = ov ? getCSSVar('--green') : 'rgba(199,125,255,.3)';
-          if (ov) { ctx.shadowColor = getCSSVar('--green'); ctx.shadowBlur = 12 / zoom; }
-          ctx.fill(); ctx.shadowBlur = 0; break;
+          // ambient glow halo when ON
+          if (ov) {
+            ctx.save();
+            const halo = ctx.createRadialGradient(cx, cy - sz * .1, sz * .1, cx, cy - sz * .1, sz * 1.4);
+            halo.addColorStop(0, 'rgba(0,255,136,0.30)');
+            halo.addColorStop(0.5, 'rgba(0,255,136,0.10)');
+            halo.addColorStop(1, 'rgba(0,255,136,0.00)');
+            ctx.fillStyle = halo;
+            ctx.beginPath(); ctx.arc(cx, cy - sz * .1, sz * 1.4, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+          }
+
+          // bulb glass dome
+          const bulbR = sz * .54;
+          const neckW = sz * .26;
+          const neckH = sz * .26;
+          const baseY = cy + bulbR * .55;
+
+          // glass fill
+          if (ov) {
+            const glassGrad = ctx.createRadialGradient(cx - bulbR * .28, cy - bulbR * .28, bulbR * .05, cx, cy, bulbR);
+            glassGrad.addColorStop(0, 'rgba(200,255,220,0.95)');
+            glassGrad.addColorStop(0.35, 'rgba(80,255,150,0.75)');
+            glassGrad.addColorStop(1, 'rgba(0,180,80,0.30)');
+            ctx.fillStyle = glassGrad;
+            ctx.shadowColor = getCSSVar('--green');
+            ctx.shadowBlur = 18 / zoom;
+          } else {
+            const glassGrad = ctx.createRadialGradient(cx - bulbR * .28, cy - bulbR * .28, bulbR * .05, cx, cy, bulbR);
+            glassGrad.addColorStop(0, isDark ? 'rgba(80,100,120,0.6)' : 'rgba(200,210,220,0.7)');
+            glassGrad.addColorStop(1, isDark ? 'rgba(20,40,60,0.3)' : 'rgba(160,180,200,0.2)');
+            ctx.fillStyle = glassGrad;
+          }
+          ctx.beginPath(); ctx.arc(cx, cy, bulbR, Math.PI, 0, false); // top dome
+          ctx.lineTo(cx + neckW, baseY);
+          ctx.lineTo(cx - neckW, baseY);
+          ctx.closePath(); ctx.fill();
+
+          // glass stroke
+          ctx.strokeStyle = ov ? getCSSVar('--green') : (isDark ? 'rgba(100,160,200,.5)' : 'rgba(80,120,160,.4)');
+          ctx.lineWidth = (ov ? 2 : 1.2) / zoom;
+          ctx.beginPath(); ctx.arc(cx, cy, bulbR, Math.PI, 0, false);
+          ctx.lineTo(cx + neckW, baseY); ctx.lineTo(cx - neckW, baseY); ctx.closePath(); ctx.stroke();
+          ctx.shadowBlur = 0;
+
+          // bulb base (screw base)
+          const baseH = sz * .22;
+          const baseTop = baseY;
+          ctx.fillStyle = isDark ? (ov ? '#1a3a28' : '#1a2030') : (ov ? '#c8e8d0' : '#c0ccd8');
+          ctx.strokeStyle = ov ? getCSSVar('--green') : (isDark ? 'rgba(100,160,200,.4)' : 'rgba(80,120,160,.3)');
+          ctx.lineWidth = 1 / zoom;
+          // three ridges of the screw base
+          for (let ri = 0; ri < 3; ri++) {
+            const ry = baseTop + (ri * baseH / 3);
+            const rw = neckW * (1 - ri * .08);
+            ctx.fillRect(cx - rw, ry, rw * 2, baseH / 3 - 1 / zoom);
+            ctx.strokeRect(cx - rw, ry, rw * 2, baseH / 3 - 1 / zoom);
+          }
+
+          // filament (visible inside glass when OFF, glowing when ON)
+          ctx.save();
+          ctx.strokeStyle = ov ? 'rgba(255,255,180,0.95)' : (isDark ? 'rgba(150,170,190,.4)' : 'rgba(100,120,140,.4)');
+          ctx.lineWidth = (ov ? 1.8 : 1.0) / zoom;
+          if (ov) { ctx.shadowColor = 'rgba(255,255,150,0.9)'; ctx.shadowBlur = 8 / zoom; }
+          // zigzag filament
+          const fTop = cy - sz * .18; const fBot = cy + sz * .12;
+          const fMid = (fTop + fBot) / 2;
+          ctx.beginPath();
+          ctx.moveTo(cx - sz * .06, fBot);
+          ctx.lineTo(cx - sz * .12, fMid + sz * .06);
+          ctx.lineTo(cx - sz * .04, fMid);
+          ctx.lineTo(cx - sz * .12, fMid - sz * .06);
+          ctx.lineTo(cx - sz * .04, fTop);
+          ctx.lineTo(cx + sz * .04, fTop);
+          ctx.lineTo(cx + sz * .12, fMid - sz * .06);
+          ctx.lineTo(cx + sz * .04, fMid);
+          ctx.lineTo(cx + sz * .12, fMid + sz * .06);
+          ctx.lineTo(cx + sz * .06, fBot);
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          ctx.restore();
+
+          // specular highlight on glass
+          ctx.save();
+          ctx.globalAlpha = ov ? .55 : .3;
+          const spec = ctx.createLinearGradient(cx - bulbR * .5, cy - bulbR * .5, cx - bulbR * .1, cy - bulbR * .1);
+          spec.addColorStop(0, 'rgba(255,255,255,.9)');
+          spec.addColorStop(1, 'rgba(255,255,255,0)');
+          ctx.fillStyle = spec;
+          ctx.beginPath(); ctx.ellipse(cx - bulbR * .32, cy - bulbR * .38, bulbR * .18, bulbR * .1, -0.7, 0, Math.PI * 2);
+          ctx.fill(); ctx.globalAlpha = 1;
+          ctx.restore();
+
+          // status text below bulb
+          ctx.fillStyle = ov ? getCSSVar('--green') : (isDark ? 'rgba(120,150,180,.6)' : 'rgba(80,100,120,.5)');
+          ctx.font = `bold ${Math.max(8, 9 / zoom)}px "Share Tech Mono"`;
+          ctx.textAlign = 'center';
+          ctx.fillText(ov ? 'HIGH ●' : 'LOW ○', cx, baseTop + baseH + 13 / zoom);
+          break;
       }
       ctx.restore();
     }
@@ -2924,6 +3295,97 @@
       if ((e.ctrlKey || e.metaKey) && k === 'd' && selectedGate) { e.preventDefault(); duplicateGate(selectedGate); }
     }
 
+    /* ═══════════════════════════ ERROR POPUP ═══════════════════════════ */
+    let errorPopupTimer = null;
+    function showErrorPopup(msg, hint) {
+      const pop = document.getElementById('errorPopup');
+      document.getElementById('errorPopupMsg').textContent = msg || 'The bulb is not glowing — check your connections.';
+      document.getElementById('errorPopupHint').textContent = hint || 'HINT: Connect all inputs → gate → output.';
+      const bar = document.getElementById('errorPopupBar');
+      bar.style.animation = 'none'; bar.offsetWidth;
+      pop.classList.add('show');
+      bar.style.animation = '';
+      if (errorPopupTimer) clearTimeout(errorPopupTimer);
+      errorPopupTimer = setTimeout(closeErrorPopup, 4200);
+      if (voiceEnabled) speak(msg);
+    }
+    function closeErrorPopup() {
+      document.getElementById('errorPopup').classList.remove('show');
+      if (errorPopupTimer) { clearTimeout(errorPopupTimer); errorPopupTimer = null; }
+    }
+
+    let successPopupTimer = null;
+    function showSuccessPopup(msg, hint) {
+      // close error popup if open
+      closeErrorPopup();
+      const pop = document.getElementById('successPopup');
+      document.getElementById('successPopupMsg').textContent = msg || 'All connections are properly wired.';
+      document.getElementById('successPopupHint').textContent = hint || 'Every INPUT is connected and every gate pin is wired up.';
+      const bar = document.getElementById('successPopupBar');
+      bar.style.animation = 'none'; bar.offsetWidth;
+      pop.classList.add('show');
+      bar.style.animation = '';
+      if (successPopupTimer) clearTimeout(successPopupTimer);
+      successPopupTimer = setTimeout(closeSuccessPopup, 4200);
+      if (voiceEnabled) speak(msg);
+    }
+    function closeSuccessPopup() {
+      document.getElementById('successPopup').classList.remove('show');
+      if (successPopupTimer) { clearTimeout(successPopupTimer); successPopupTimer = null; }
+    }
+
+    /* Analyse the circuit for WIRING errors only.
+       A logical output of 0 (e.g. AND gate with A=0,B=0) is NOT an error — never flag that. */
+    function checkCircuitErrors() {
+      const outputGates = gates.filter(g => g.type === 'OUTPUT');
+      const inputGates = gates.filter(g => g.type === 'INPUT');
+      if (!outputGates.length) return;
+
+      for (const out of outputGates) {
+        // ── Case 1: No wire into the OUTPUT bulb ──
+        const inWire = wires.find(w => w.toGate === out.id && w.toPort === 0);
+        if (!inWire) {
+          showErrorPopup(
+            `Bulb "${out.label}" has no connection — nothing is wired to it!`,
+            'HINT: Use Wire tool (W) → click a gate\'s output port → click the bulb.'
+          );
+          return;
+        }
+
+        // ── Case 2: Gate driving the bulb has floating (unwired) input pins ──
+        const srcGate = gates.find(g => g.id === inWire.fromGate);
+        if (srcGate && srcGate.type !== 'INPUT') {
+          const floatingPins = [];
+          for (let i = 0; i < srcGate.inputs; i++) {
+            if (!wires.some(w => w.toGate === srcGate.id && w.toPort === i)) floatingPins.push(i);
+          }
+          if (floatingPins.length) {
+            showErrorPopup(
+              `Bulb "${out.label}" not glowing — "${srcGate.label}" has ${floatingPins.length} unconnected input pin(s)!`,
+              `HINT: Connect all input pins of the "${srcGate.type}" gate to INPUT nodes or other gates.`
+            );
+            return;
+          }
+        }
+
+        // ── Case 3: An INPUT node exists but has no outgoing wires at all ──
+        const orphan = inputGates.find(inp => !wires.some(w => w.fromGate === inp.id));
+        if (orphan) {
+          showErrorPopup(
+            `INPUT "${orphan.label}" is placed but not connected to anything!`,
+            `HINT: Wire INPUT "${orphan.label}" to a gate or directly to the bulb.`
+          );
+          return;
+        }
+
+        // ── Circuit is fully wired — if bulb is off, that is a VALID logical 0. Close any popup. ──
+        closeErrorPopup();
+      }
+    }
+
+    // Track last bulb state (kept for future use)
+    let errorDebounce = null;
+
     /* ═══════════════════════════ SIMULATION ═══════════════════════════ */
     function simulateAll() {
       const visited = new Set();
@@ -2945,6 +3407,28 @@
       });
       if (selectedGate) { const live = gates.find(g => g.id === selectedGate.id); if (live) showTruthTable(live.type, live.inputValues); }
       updateWaveform(); updateStatus(); updateBooleanPanel();
+    }
+
+    /* Called ONLY by the "Check Circuit" button — never auto-triggered */
+    function manualCheckCircuit() {
+      const hasOutput = gates.some(g => g.type === 'OUTPUT');
+      const hasInput = gates.some(g => g.type === 'INPUT');
+      if (!hasOutput || !hasInput) {
+        notify('Place at least one INPUT and one OUTPUT (bulb) first', 'warn'); return;
+      }
+      const allOutputsWired = gates.filter(g => g.type === 'OUTPUT').every(o => wires.some(w => w.toGate === o.id));
+      const hasOrphanInput = gates.filter(g => g.type === 'INPUT').some(inp => !wires.some(w => w.fromGate === inp.id));
+      const hasFloatingPin = gates.filter(g => g.type !== 'INPUT' && g.type !== 'OUTPUT').some(g => {
+        for (let i = 0; i < g.inputs; i++) { if (!wires.some(w => w.toGate === g.id && w.toPort === i)) return true; } return false;
+      });
+      if (allOutputsWired && !hasOrphanInput && !hasFloatingPin) {
+        showSuccessPopup(
+          'Circuit is correctly connected! 🎉',
+          'All inputs are wired, all gate pins are connected, and the bulb is receiving a signal.'
+        );
+      } else {
+        checkCircuitErrors();
+      }
     }
 
     function computeGate(g) {
@@ -3326,175 +3810,17 @@
       updateSimUI();
     }
 
-
-    // The intelligent response generator (NO APIS) - Complete Version
-    function generateAIResponse(question) {
-      const q = question.toLowerCase().trim();
-
-      // ========== BASIC HUMAN CONVERSATIONS ==========
-      if (q === 'hi' || q === 'hello' || q === 'hey' || q === 'hello there' || q === 'hi there') {
-        return "Hello. I am the SRM VoxLogic AI Tutor. I am here to help you learn digital logic design. You can ask me about logic gates, circuits, experiments, or how to use the simulator. What would you like to learn today?";
-      }
-
-      if (q.includes('how are you') || q.includes('how r u')) {
-        return "I am functioning perfectly and ready to assist you with your digital logic studies. I have access to all 12 experiments, gate libraries, and circuit analysis tools. How can I help you with your DLD lab work today?";
-      }
-
-      if (q.includes('thank')) {
-        return "You are welcome. I am glad to assist you with your digital logic learning. Keep practicing and you will master these concepts.";
-      }
-
-      if (q.includes('bye') || q.includes('goodbye')) {
-        return "Goodbye. Keep exploring digital logic. Remember you can always return to the simulator for more practice. Have a great day.";
-      }
-
-      if (q.includes('what is your name') || q.includes('who are you')) {
-        return "I am the SRM VoxLogic AI Tutor, your intelligent assistant for the Digital Logic Design Laboratory at SRM Institute of Science and Technology.";
-      }
-
-      // ========== LOGIC GATES ==========
-      if (q.includes('and gate') || q === 'and') {
-        return "AND GATE: Output is 1 only when ALL inputs are 1. Truth table: 0 0=0, 0 1=0, 1 0=0, 1 1=1. Expression: Y = A · B. Used in security systems where all conditions must be met.";
-      }
-
-      if (q.includes('or gate') || q === 'or') {
-        return "OR GATE: Output is 1 when ANY input is 1. Truth table: 0 0=0, 0 1=1, 1 0=1, 1 1=1. Expression: Y = A + B. Used in alarm systems where any trigger activates the alarm.";
-      }
-
-      if (q.includes('not gate') || q.includes('inverter') || q === 'not') {
-        return "NOT GATE: Output is opposite of input. Truth table: NOT 0=1, NOT 1=0. Expression: Y = A'. Used to invert signals.";
-      }
-
-      if (q.includes('nand gate') || q === 'nand') {
-        return "NAND GATE: Output is 0 only when ALL inputs are 1. Truth table: 0 0=1, 0 1=1, 1 0=1, 1 1=0. Expression: Y = (A·B)'. NAND is a UNIVERSAL gate - you can build any gate using only NAND gates.";
-      }
-
-      if (q.includes('nor gate') || q === 'nor') {
-        return "NOR GATE: Output is 1 only when ALL inputs are 0. Truth table: 0 0=1, 0 1=0, 1 0=0, 1 1=0. Expression: Y = (A+B)'. NOR is also a UNIVERSAL gate.";
-      }
-
-      if (q.includes('xor gate') || q === 'xor') {
-        return "XOR GATE: Output is 1 when inputs are DIFFERENT. Truth table: 0 0=0, 0 1=1, 1 0=1, 1 1=0. Expression: Y = A ⊕ B. Core component of ADDER circuits - gives the SUM bit.";
-      }
-
-      if (q.includes('xnor gate') || q === 'xnor') {
-        return "XNOR GATE: Output is 1 when inputs are SAME. Truth table: 0 0=1, 0 1=0, 1 0=0, 1 1=1. Expression: Y = (A⊕B)'. Used in COMPARATORS to check if bits are equal.";
-      }
-
-      // ========== EXPERIMENTS 1-12 ==========
-      if (q.includes('experiment 1') || (q.includes('exp 1') && !q.includes('2'))) {
-        return "EXPERIMENT 1: Logic Gates and Truth Tables. Covers AND, OR, NOT, NAND, NOR, XOR, XNOR gates. Learn truth tables, Boolean expressions, and gate verification. Double-click INPUT nodes to test all combinations.";
-      }
-
-      if (q.includes('experiment 2') || q.includes('exp 2')) {
-        return "EXPERIMENT 2: Universal Gates using NAND and NOR. Learn to build AND, OR, NOT using only NAND gates, and then using only NOR gates. Demonstrates why NAND and NOR are called universal gates.";
-      }
-
-      if (q.includes('experiment 3') || q.includes('exp 3')) {
-        return "EXPERIMENT 3: Half Adder and Half Subtractor. Half Adder: Sum = A XOR B, Carry = A AND B. Half Subtractor: Difference = A XOR B, Borrow = NOT A AND B. Cannot handle carry-in from previous stage.";
-      }
-
-      if (q.includes('experiment 4') || q.includes('exp 4')) {
-        return "EXPERIMENT 4: Full Adder and Full Subtractor. Accepts carry-in/borrow-in for cascading. Full Adder: Sum = A XOR B XOR Cin, Cout = (A·B)+(B·Cin)+(A·Cin). Essential for multi-bit addition.";
-      }
-
-      if (q.includes('experiment 5') || q.includes('exp 5')) {
-        return "EXPERIMENT 5: 4-bit Ripple Carry Adder. Chains four full adders to add 4-bit numbers. Carry ripples from LSB to MSB. Limitation is propagation delay - each stage waits for previous carry.";
-      }
-
-      if (q.includes('experiment 6') || q.includes('exp 6')) {
-        return "EXPERIMENT 6: BCD Adder. Adds BCD digits (0-9). When sum exceeds 9, adds 0110 (6) for correction. Used in calculators and financial systems where decimal accuracy is critical.";
-      }
-
-      if (q.includes('experiment 7') || q.includes('exp 7')) {
-        return "EXPERIMENT 7: Code Converters. Binary to Gray code: G3=B3, G2=B3⊕B2, G1=B2⊕B1, G0=B1⊕B0. Gray code has only one bit change between consecutive values. Also covers BCD to Excess-3 conversion.";
-      }
-
-      if (q.includes('experiment 8') || q.includes('exp 8')) {
-        return "EXPERIMENT 8: Encoders and Decoders. 3-to-8 decoder activates one of eight outputs based on 3-bit input. Priority encoder converts active input line to binary code, handling multiple active inputs by priority.";
-      }
-
-      if (q.includes('experiment 9') || q.includes('exp 9')) {
-        return "EXPERIMENT 9: Multiplexer and Demultiplexer. 4-to-1 MUX selects one of four inputs using two select lines. 1-to-4 DEMUX routes one input to one of four outputs. Used in data routing and signal distribution.";
-      }
-
-      if (q.includes('experiment 10') || q.includes('exp 10')) {
-        return "EXPERIMENT 10: SR Flip-Flop using NAND Gates. First sequential circuit with memory. States: SET (S=0,R=1), RESET (S=1,R=0), HOLD (S=1,R=1). Forbidden state when S=0,R=0. Used in debouncing switches and registers.";
-      }
-
-      if (q.includes('experiment 11') || q.includes('exp 11')) {
-        return "EXPERIMENT 11: JK and D Flip-Flops. JK solves SR forbidden state by toggling when J=K=1. D flip-flop: Q follows D on clock edge - most widely used. Used in frequency dividers, counters, registers.";
-      }
-
-      if (q.includes('experiment 12') || q.includes('exp 12')) {
-        return "EXPERIMENT 12: Counters and Registers. 3-bit ripple counter counts 000 to 111. Shift register shifts data left/right each clock. Used in timers, program counters, serial communication.";
-      }
-
-      // ========== CIRCUIT ANALYSIS ==========
-      if (q.includes('my circuit') || q.includes('what do i have') || q.includes('analyze')) {
-        const gc = gates ? gates.length : 0;
-        const ic = gates ? gates.filter(g => g.type === 'INPUT').length : 0;
-        const oc = gates ? gates.filter(g => g.type === 'OUTPUT').length : 0;
-        const wc = wires ? wires.length : 0;
-
-        if (gc === 0) return "Your canvas is empty. Drag gates from the left palette or load an experiment from the sidebar.";
-
-        return "Your circuit has " + gc + " gates (" + ic + " inputs, " + oc + " outputs) and " + wc + " wire connections. Double-click INPUT nodes to toggle values. Click the Auto Truth Table button to test all combinations.";
-      }
-
-      // ========== TROUBLESHOOTING ==========
-      if (q.includes('not working') || q.includes('stuck') || q.includes('error')) {
-        return "TROUBLESHOOTING TIPS: 1. Refresh the browser page. 2. Click the Reset button to reload the experiment. 3. For wires, ensure you are clicking exactly on the port circles. 4. Try dragging a gate from the palette. If problems persist, contact your DLD lab instructor.";
-      }
-
-      // ========== HOW TO USE ==========
-      if (q.includes('how to use') || q.includes('tutorial')) {
-        return "HOW TO USE: 1. Drag gates from left palette onto canvas. 2. Click Wire tool (W key), click output port, then input port. 3. Double-click INPUT nodes to toggle 0/1. 4. Press F to fit view. 5. Use right panel for Truth Table, Boolean Expression, Waveform. 6. Click MIC for voice commands.";
-      }
-
-      // ========== SHORTCUTS ==========
-      if (q.includes('shortcut') || q.includes('keyboard')) {
-        return "KEYBOARD SHORTCUTS: S=Select, W=Wire, D=Delete, F=Fit view, +=Zoom in, -=Zoom out, G=Snap grid, T=Theme, Space=Step, Ctrl+Z=Undo, Ctrl+Y=Redo, Ctrl+D=Duplicate, Delete=Delete gate.";
-      }
-
-      // ========== BOOLEAN ALGEBRA ==========
-      if (q.includes('boolean') || q.includes('de morgan')) {
-        return "BOOLEAN ALGEBRA: Identity: A·1=A, A+0=A. Null: A·0=0, A+1=1. Complement: A·A'=0, A+A'=1. DeMorgan's Laws: (A·B)' = A'+B', (A+B)' = A'·B'. These laws help simplify circuits to use fewer gates.";
-      }
-
-      // ========== FLIP FLOPS ==========
-      if (q.includes('flip flop') || q === 'flipflop') {
-        return "FLIP-FLOPS: Sequential circuits that store 1 bit. SR has Set, Reset, Hold states. JK toggles when J=K=1. D flip-flop: Q follows D on clock edge. Used in registers, counters, memory.";
-      }
-
-      // ========== ADDERS ==========
-      if (q.includes('adder') && !q.includes('experiment')) {
-        return "ADDERS: Half Adder adds 2 bits (Sum=A⊕B, Carry=A·B). Full Adder adds 3 bits including carry-in. 4-bit Ripple Carry Adder chains Full Adders. BCD Adder adds decimal digits with correction for sums over 9.";
-      }
-
-      // ========== VOICE COMMANDS ==========
-      if (q.includes('voice command') || (q.includes('say') && q.includes('mic'))) {
-        return "VOICE COMMANDS: 'simulate' or 'run' for auto-simulation, 'reset' to clear, 'next experiment', 'previous experiment', 'explain' for selected gate, 'truth table', 'what is my circuit', 'narrate', 'zoom in', 'zoom out', 'fit view', 'undo', 'redo', 'dark mode', 'light mode', 'stop'.";
-      }
-
-      // ========== DEFAULT ==========
-      return "I am the SRM VoxLogic AI Tutor. I can help you with: Logic Gates (AND, OR, NOT, NAND, NOR, XOR, XNOR), Experiments 1-12, Circuit Analysis ('what is my circuit'), Boolean Algebra, Flip-flops, Adders, Keyboard Shortcuts, and Voice Commands. What would you like to learn?";
-    }
     /* ═══════════════════════════ AI ═══════════════════════════ */
-    function getCircuitContext() {
-      if (!gates.length) return 'Canvas is empty.';
-      const gateList = gates.map(g => `${g.type}(${g.label}) out=${g.outputValue} in=[${g.inputValues.join(',')}]`).join('; ');
-      const wireList = wires.map(w => {
-        const fg = gates.find(g => g.id === w.fromGate), tg = gates.find(g => g.id === w.toGate);
-        return fg && tg ? `${fg.label}→${tg.label}[${w.toPort}]` : '';
-      }).filter(Boolean).join(', ');
-      return `${gates.length} gates: ${gateList}. ${wires.length} wires: ${wireList}.`;
-    }
+
     function injectCircuitContext() {
-      const inp = document.getElementById('aiInput');
-      inp.value = 'Explain this circuit: ' + getCircuitContext(); inp.focus();
-      notify('Circuit state injected', 'ok');
+      const ctx = getCircuitContext();
+      const exp = EXPERIMENTS.find(e => e.id === currentExp);
+      const input = document.getElementById('aiInput');
+      input.value = `I am on Experiment ${currentExp} (${exp ? exp.name.replace('\n', ' ') : ''}). My circuit has ${ctx}. Please explain what this circuit does and how to improve it.`;
+      input.focus();
+      notify('Circuit context injected into chat', 'ok');
     }
+
     async function sendAI() {
       const input = document.getElementById('aiInput');
       const msg = input.value.trim();
@@ -3530,6 +3856,288 @@
 
       document.getElementById('aiSendBtn').disabled = false;
       msgs.scrollTop = msgs.scrollHeight;
+    }
+
+
+    // The intelligent response generator (NO APIS) - Complete Version
+    function generateAIResponse(question) {
+      const q = question.toLowerCase().trim();
+      const circuitContext = getCircuitContext();
+
+      // ========== BASIC HUMAN CONVERSATIONS ==========
+      if (q === 'hi' || q === 'hello' || q === 'hey' || q === 'hello there' || q === 'hi there') {
+        return "Hello! I am the SRM VoxLogic AI Tutor. I am here to help you learn digital logic design. You can ask me about logic gates, circuits, experiments, or how to use the simulator. What would you like to learn today?";
+      }
+
+      if (q.includes('how are you') || q.includes('how r u') || q.includes('how are u')) {
+        return "I am functioning perfectly and ready to assist you with your digital logic studies. I have access to all 12 experiments, gate libraries, and circuit analysis tools. How can I help you with your DLD lab work today?";
+      }
+
+      if (q.includes('good morning') || q.includes('good afternoon') || q.includes('good evening')) {
+        return "Good day to you! I am ready to help you master digital logic design. Which experiment or topic would you like to explore today?";
+      }
+
+      if (q.includes('thank') || q.includes('thanks') || q.includes('thank you')) {
+        return "You are welcome. I am glad to assist you with your digital logic learning. Keep practicing and you will master these concepts. Feel free to ask me anything else.";
+      }
+
+      if (q.includes('bye') || q.includes('goodbye') || q.includes('see you')) {
+        return "Goodbye! Keep exploring digital logic. Remember you can always return to the simulator for more practice. Have a great day.";
+      }
+
+      if (q.includes('what is your name') || q.includes('who are you')) {
+        return "I am the SRM VoxLogic AI Tutor, your intelligent assistant for the Digital Logic Design Laboratory at SRM Institute of Science and Technology. I can explain gates, help with experiments, analyze circuits, and answer your DLD questions.";
+      }
+
+      if (q.includes('what can you do') || q.includes('your capabilities') || q.includes('help me with')) {
+        return "I can help you with the following:\n\n- Explain all logic gates: AND, OR, NOT, NAND, NOR, XOR, XNOR\n- Analyze your current circuit on the canvas\n- Explain all 12 experiments in detail\n- Teach Boolean algebra and DeMorgan's laws\n- Explain adders, flip-flops, counters, multiplexers\n- Provide keyboard shortcuts and usage tips\n- Answer specific digital logic questions\n- Guide you through voice commands\n\nJust ask me anything about digital logic design.";
+      }
+
+      // ========== GREETINGS WITH CONTEXT ==========
+      if (q.includes('i am stuck') || q.includes('need help') || q.includes('help me')) {
+        return "I understand you need assistance. Let me help you. First, tell me which experiment you are working on or which concept is confusing you. You can also ask me to explain a specific gate or circuit. If you have built something on the canvas, ask me 'what is my circuit' for analysis.";
+      }
+
+      // ========== GATE EXPLANATIONS (COMPLETE) ==========
+      if (q.includes('and gate') || (q.includes('and') && q.includes('gate')) || q === 'and') {
+        return "AND GATE:\n\nDefinition: Output is HIGH (1) only when ALL inputs are HIGH (1).\n\nTruth Table (2-input):\nA B | Y\n0 0 | 0\n0 1 | 0\n1 0 | 0\n1 1 | 1\n\nBoolean Expression: Y = A · B\n\nReal-world analogy: Two switches in series - both must be ON for the light to glow.\n\nApplication: Used in security systems where ALL conditions must be met, and in arithmetic circuits for carry generation.\n\nTry it: Drag an AND gate onto the canvas, connect two INPUT gates, and double-click the inputs to test all combinations.";
+      }
+
+      if (q.includes('or gate') || (q.includes('or') && q.includes('gate')) || q === 'or') {
+        return "OR GATE:\n\nDefinition: Output is HIGH (1) when ANY input is HIGH (1).\n\nTruth Table (2-input):\nA B | Y\n0 0 | 0\n0 1 | 1\n1 0 | 1\n1 1 | 1\n\nBoolean Expression: Y = A + B\n\nReal-world analogy: Two switches in parallel - either switch turns ON the light.\n\nApplication: Used in alarm systems where ANY trigger activates the alarm, and in adder circuits for carry generation.\n\nTry it: Drag an OR gate onto the canvas and test with two INPUT gates.";
+      }
+
+      if (q.includes('not gate') || q.includes('inverter') || q === 'not') {
+        return "NOT GATE (INVERTER):\n\nDefinition: Output is the OPPOSITE of the input.\n\nTruth Table:\nA | Y\n0 | 1\n1 | 0\n\nBoolean Expression: Y = Ā or Y = A'\n\nReal-world analogy: A light switch that is always opposite - when switch is up, light is off.\n\nApplication: Used to invert signals, create complementary outputs, and build oscillators.\n\nNote: NOT gate has only ONE input. Try it on the canvas.";
+      }
+
+      if (q.includes('nand gate') || q === 'nand') {
+        return "NAND GATE (NOT AND):\n\nDefinition: Output is LOW (0) only when ALL inputs are HIGH (1). It is the complement of AND.\n\nTruth Table (2-input):\nA B | Y\n0 0 | 1\n0 1 | 1\n1 0 | 1\n1 1 | 0\n\nBoolean Expression: Y = (A · B)'\n\nUNIVERSAL GATE PROPERTY: You can build ANY logic gate using only NAND gates!\n\nHow to build other gates with NAND:\n- NOT gate: Connect both inputs together\n- AND gate: NAND followed by NOT (NAND with tied inputs)\n- OR gate: Invert inputs then NAND (DeMorgan's Law)\n\nApplication: Most computer chips are built entirely from NAND gates because it reduces manufacturing costs.";
+      }
+
+      if (q.includes('nor gate') || q === 'nor') {
+        return "NOR GATE (NOT OR):\n\nDefinition: Output is HIGH (1) only when ALL inputs are LOW (0). It is the complement of OR.\n\nTruth Table (2-input):\nA B | Y\n0 0 | 1\n0 1 | 0\n1 0 | 0\n1 1 | 0\n\nBoolean Expression: Y = (A + B)'\n\nUNIVERSAL GATE PROPERTY: Like NAND, you can build ANY logic circuit using only NOR gates!\n\nHow to build other gates with NOR:\n- NOT gate: Connect both inputs together\n- OR gate: NOR followed by NOT (NOR with tied inputs)\n- AND gate: Invert inputs then NOR (DeMorgan's Law)\n\nApplication: Used in memory circuits and as universal building blocks.";
+      }
+
+      if (q.includes('xor gate') || q.includes('exclusive or') || q === 'xor') {
+        return "XOR GATE (Exclusive OR):\n\nDefinition: Output is HIGH (1) when inputs are DIFFERENT.\n\nTruth Table (2-input):\nA B | Y\n0 0 | 0\n0 1 | 1\n1 0 | 1\n1 1 | 0\n\nBoolean Expression: Y = A ⊕ B\n\nKey Property: Output is 1 when odd number of inputs are 1.\n\nApplication: CORE COMPONENT of ADDER circuits! A XOR B gives the SUM bit in binary addition. Also used in parity generators and error detection.\n\nTry it: Build a half adder using XOR for Sum and AND for Carry.";
+      }
+
+      if (q.includes('xnor gate') || q.includes('exclusive nor') || q === 'xnor') {
+        return "XNOR GATE (Equivalence / Exclusive NOR):\n\nDefinition: Output is HIGH (1) when inputs are SAME (both 0 or both 1). It is the complement of XOR.\n\nTruth Table (2-input):\nA B | Y\n0 0 | 1\n0 1 | 0\n1 0 | 0\n1 1 | 1\n\nBoolean Expression: Y = (A ⊕ B)' or Y = A ⊙ B\n\nApplication: Used in COMPARATORS to check if two bits are equal. Also used in parity checkers and encryption circuits.\n\nNote: XNOR is also called the equivalence gate.";
+      }
+
+      if (q.includes('buffer') || q.includes('buf gate')) {
+        return "BUFFER GATE:\n\nDefinition: Output follows input exactly. Y = A\n\nTruth Table:\nA | Y\n0 | 0\n1 | 1\n\nApplication: Buffers do not perform logic operations. They are used to:\n- Strengthen weak signals\n- Drive multiple gates without loading the source\n- Add delay in timing circuits\n- Isolate different parts of a circuit\n\nTry it: Connect a buffer between an INPUT and OUTPUT to see signal pass through unchanged.";
+      }
+
+      // ========== EXPERIMENT 1: LOGIC GATES ==========
+      if ((q.includes('experiment 1') || q.includes('exp 1') || q.includes('exp1')) && (q.includes('gate') || q.includes('logic'))) {
+        return "EXPERIMENT 1: LOGIC GATES AND TRUTH TABLES\n\nObjective: Study the seven fundamental logic gates used in digital circuits.\n\nGates covered: AND, OR, NOT, NAND, NOR, XOR, XNOR\n\nWhat you will learn:\n- Truth tables for each gate\n- Boolean expressions\n- Real-world applications\n- How to verify gate behavior\n\nSteps to complete:\n1. The canvas shows all seven gates pre-connected\n2. Double-click INPUT nodes (A and B) to toggle values\n3. Observe how each gate output changes\n4. Compare with truth tables shown in the Truth panel\n5. Click the Auto Truth Table button to test all combinations\n\nVoice narration available: Click the Script tab and press NARRATE for audio explanation.\n\nExpected output: You should verify that each gate matches its theoretical truth table.";
+      }
+
+      // ========== EXPERIMENT 2: UNIVERSAL GATES ==========
+      if ((q.includes('experiment 2') || q.includes('exp 2') || q.includes('exp2')) && (q.includes('universal') || q.includes('nand') || q.includes('nor'))) {
+        return "EXPERIMENT 2: UNIVERSAL GATES USING NAND AND NOR\n\nObjective: Realize AND, OR, and NOT operations using only NAND gates, and then using only NOR gates.\n\nWhy universal gates matter:\n- Any Boolean function can be implemented using only NAND or only NOR\n- Reduces manufacturing costs in VLSI design\n- One gate type can build entire systems\n\nNAND-only implementations:\n- NOT gate: Connect both inputs together\n- AND gate: NAND followed by NOT\n- OR gate: Invert inputs then NAND (DeMorgan's Law)\n\nNOR-only implementations:\n- NOT gate: Connect both inputs together\n- OR gate: NOR followed by NOT\n- AND gate: Invert inputs then NOR\n\nVerification: Toggle inputs and verify that NAND-only circuits produce same truth tables as basic gates.\n\nApplication: This is why real computer chips are often built from NAND gates exclusively.";
+      }
+
+      // ========== EXPERIMENT 3: HALF ADDER ==========
+      if ((q.includes('experiment 3') || q.includes('exp 3') || q.includes('exp3')) && (q.includes('half adder') || q.includes('half subtractor'))) {
+        return "EXPERIMENT 3: HALF ADDER AND HALF SUBTRACTOR\n\nObjective: Build circuits for 1-bit addition and subtraction.\n\nHALF ADDER:\n- Adds two bits A and B\n- Sum S = A XOR B\n- Carry C = A AND B\n- Truth table: 0+0=00, 0+1=01, 1+0=01, 1+1=10\n\nHALF SUBTRACTOR:\n- Subtracts B from A\n- Difference D = A XOR B\n- Borrow Bout = (NOT A) AND B\n- Truth table: 0-0=00, 0-1=11, 1-0=01, 1-1=00\n\nLimitation: Cannot handle carry-in or borrow-in from previous stage. This is why full adder is needed for multi-bit addition.\n\nTry it: Toggle A and B inputs and observe Sum and Carry outputs. Verify all four combinations.\n\nApplication: Building block for more complex arithmetic circuits.";
+      }
+
+      // ========== EXPERIMENT 4: FULL ADDER ==========
+      if ((q.includes('experiment 4') || q.includes('exp 4') || q.includes('exp4')) && (q.includes('full adder') || q.includes('full subtractor'))) {
+        return "EXPERIMENT 4: FULL ADDER AND FULL SUBTRACTOR\n\nObjective: Build circuits that accept carry-in/borrow-in for cascading.\n\nFULL ADDER:\n- Inputs: A, B, Cin\n- Outputs: Sum S, Carry-out Cout\n- Sum S = A XOR B XOR Cin\n- Cout = (A·B) + (B·Cin) + (A·Cin)\n- Truth table: 8 combinations (0 to 7)\n\nCircuit structure:\n- Stage 1: XOR1 for A⊕B, AND1 for A·B\n- Stage 2: XOR2 for (A⊕B)⊕Cin gives Sum\n- Stage 2: AND2 for (A⊕B)·Cin\n- OR gate combines AND1 and AND2 for Cout\n\nFULL SUBTRACTOR:\n- Difference D = A XOR B XOR Bin\n- Borrow Bout = (NOT A·B) + (NOT A·Bin) + (B·Bin)\n\nApplication: Multiple full adders cascade to form multi-bit adders like the 4-bit ripple carry adder.\n\nTry it: Toggle A, B, and Cin inputs. Verify Sum and Cout match truth table.";
+      }
+
+      // ========== EXPERIMENT 5: 4-BIT ADDER ==========
+      if ((q.includes('experiment 5') || q.includes('exp 5') || q.includes('exp5')) && (q.includes('4-bit') || q.includes('ripple carry') || q.includes('7483'))) {
+        return "EXPERIMENT 5: 4-BIT RIPPLE CARRY ADDER\n\nObjective: Chain four full adders to add two 4-bit binary numbers.\n\nCircuit: A3A2A1A0 + B3B2B1B0 = S3S2S1S0 with Cout\n\nHow it works:\n- Stage 0: Adds A0 + B0 + Cin=0 → S0, C0\n- Stage 1: Adds A1 + B1 + C0 → S1, C1\n- Stage 2: Adds A2 + B2 + C1 → S2, C2\n- Stage 3: Adds A3 + B3 + C2 → S3, Cout\n\nThe carry 'ripples' from LSB to MSB, hence the name.\n\nLimitation: Propagation delay increases with number of bits. Each stage must wait for previous carry.\n\nExample: 0111 (7) + 0001 (1) = 1000 (8) with Cout=0\n\nTry it: Toggle input bits A0-A3 and B0-B3. Observe sum bits and final carry.\n\nApplication: Standard IC 7483 implements this circuit and is used in ALUs and calculators.";
+      }
+
+      // ========== EXPERIMENT 6: BCD ADDER ==========
+      if ((q.includes('experiment 6') || q.includes('exp 6') || q.includes('exp6')) && q.includes('bcd')) {
+        return "EXPERIMENT 6: BCD ADDER DESIGN\n\nObjective: Add two BCD digits with correction for sums greater than 9.\n\nBCD (Binary Coded Decimal):\n- Each decimal digit (0-9) represented by 4 bits\n- Valid: 0000 to 1001 (0 to 9)\n- Invalid: 1010 to 1111 (10 to 15)\n\nThe Problem: Adding two BCD digits can produce invalid codes.\nExample: 5 (0101) + 8 (1000) = 13 (1101) - INVALID BCD!\n\nCorrection Logic:\n- If binary sum > 9 OR carry generated, add 0110 (6)\n- Detection: Cout = 1 OR (S3·S2) OR (S3·S1)\n\nCircuit Structure:\n- Stage 1: Add BCD numbers using 4-bit adder\n- Stage 2: Detect if correction needed\n- Stage 3: Add 0110 if needed using second adder\n\nExample: 5+8=13 → 0101+1000=1101 (invalid) → +0110 = 10010 → Carry=1, BCD digit=0010 (2) → Result: 1 2 (decimal 12)\n\nApplication: Calculators, financial systems, digital clocks where decimal accuracy is critical.";
+      }
+
+      // ========== EXPERIMENT 7: CODE CONVERTERS ==========
+      if ((q.includes('experiment 7') || q.includes('exp 7') || q.includes('exp7')) && (q.includes('code converter') || q.includes('gray') || q.includes('excess'))) {
+        return "EXPERIMENT 7: CODE CONVERTERS\n\nObjective: Implement BCD to Excess-3 and Binary to Gray code conversions.\n\nGRAY CODE:\n- Consecutive numbers differ by only ONE bit\n- Eliminates ambiguity during transitions\n- Used in shaft encoders and Karnaugh maps\n\nBinary to Gray conversion:\n- G3 = B3\n- G2 = B3 XOR B2\n- G1 = B2 XOR B1\n- G0 = B1 XOR B0\n\nExample: Binary 1010 → Gray 1111\n\nEXCESS-3 CODE:\n- Self-complementing BCD code\n- Formed by adding 0011 (3) to BCD digit\n- Example: BCD 0100 (4) → Excess-3 0111 (7)\n\nBCD to Excess-3 logic:\n- E0 = NOT B0\n- E1 = B1 XOR B0\n- E2 = B2 XOR (B1·B0)\n- E3 = derived expression\n\nTry it: Toggle input bits and observe converted outputs. Verify Gray code property - only one bit changes between consecutive values.\n\nApplication: Gray code in encoders, Excess-3 in BCD arithmetic.";
+      }
+
+      // ========== EXPERIMENT 8: ENCODERS AND DECODERS ==========
+      if ((q.includes('experiment 8') || q.includes('exp 8') || q.includes('exp8')) && (q.includes('encoder') || q.includes('decoder'))) {
+        return "EXPERIMENT 8: ENCODERS AND DECODERS\n\nObjective: Build and test 3-to-8 decoder and priority encoder.\n\nDECODER (3-to-8):\n- Input: 3-bit binary (A,B,C)\n- Output: 8 lines (D0 to D7), exactly one active\n- D0 active when A=0,B=0,C=0\n- D1 active when A=0,B=0,C=1\n- ... D7 active when A=1,B=1,C=1\n- Each output is a minterm of inputs\n\nENCODER:\n- Reverse operation - converts active input line to binary code\n- 8-to-3 encoder: 8 inputs, 3-bit output\n\nPRIORITY ENCODER:\n- Handles multiple active inputs\n- Highest priority input wins\n- Example: I4 and I6 both active → output 110 (binary 6)\n\nApplication: Decoders in memory address decoding and seven-segment displays. Encoders in keyboard scanning and interrupt controllers.\n\nTry it: For decoder, toggle A,B,C inputs and verify exactly one output is active for each combination.";
+      }
+
+      // ========== EXPERIMENT 9: MULTIPLEXER AND DEMULTIPLEXER ==========
+      if ((q.includes('experiment 9') || q.includes('exp 9') || q.includes('exp9')) && (q.includes('mux') || q.includes('demux') || q.includes('multiplexer'))) {
+        return "EXPERIMENT 9: MULTIPLEXER AND DEMULTIPLEXER\n\nObjective: Build 4-to-1 MUX and 1-to-4 DEMUX.\n\nMULTIPLEXER (4-to-1):\n- 4 data inputs: I0, I1, I2, I3\n- 2 select lines: S0, S1\n- 1 output: Y\n- Select lines choose which input routes to output\n\nSelection:\n- S1=0,S0=0 → Y = I0\n- S1=0,S0=1 → Y = I1\n- S1=1,S0=0 → Y = I2\n- S1=1,S0=1 → Y = I3\n\nBoolean Expression:\nY = (NOT S1·NOT S0·I0) + (NOT S1·S0·I1) + (S1·NOT S0·I2) + (S1·S0·I3)\n\nDEMULTIPLEXER (1-to-4):\n- 1 data input D\n- 2 select lines S0, S1\n- 4 outputs: Y0, Y1, Y2, Y3\n- Routes input to selected output\n\nApplication: MUX in data routing and function generation. DEMUX in memory systems and display multiplexing.\n\nTry it: Set select lines and toggle data inputs. Only selected input appears at output.";
+      }
+
+      // ========== EXPERIMENT 10: SR FLIP-FLOP ==========
+      if ((q.includes('experiment 10') || q.includes('exp 10') || q.includes('exp10')) && (q.includes('sr') || q.includes('latch'))) {
+        return "EXPERIMENT 10: SR FLIP-FLOP USING NAND GATES\n\nObjective: Build and analyze SR latch, your first sequential circuit.\n\nWhat makes it sequential: Output depends on BOTH current inputs AND previous state (memory!).\n\nSR LATCH with NAND (Active LOW inputs):\n- S-bar = 0, R-bar = 1 → SET state (Q=1, Q-bar=0)\n- S-bar = 1, R-bar = 0 → RESET state (Q=0, Q-bar=1)\n- S-bar = 1, R-bar = 1 → HOLD state (remembers previous value)\n- S-bar = 0, R-bar = 0 → FORBIDDEN state (both outputs 1)\n\nTruth Table:\nS-bar R-bar | Q(next) Q-bar(next)\n0    1     | 1       0 (SET)\n1    0     | 0       1 (RESET)\n1    1     | Q(prev) Q-bar(prev) (HOLD)\n0    0     | 1       1 (FORBIDDEN - avoid!)\n\nCross-coupled NAND gates: Each NAND output feeds back to the other NAND input, creating memory.\n\nTry it: Step by step:\n1. Apply S=0,R=1 → Q becomes 1 (SET)\n2. Release S to 1 → Q stays 1 (memory!)\n3. Apply R=0,S=1 → Q becomes 0 (RESET)\n4. Release R → Q stays 0\n\nApplication: Debouncing switches, building registers, and as core of all flip-flops.";
+      }
+
+      // ========== EXPERIMENT 11: JK AND D FLIP-FLOPS ==========
+      if ((q.includes('experiment 11') || q.includes('exp 11') || q.includes('exp11')) && (q.includes('jk') || q.includes('d flip flop'))) {
+        return "EXPERIMENT 11: JK AND D FLIP-FLOPS\n\nObjective: Build JK flip-flop (no forbidden state) and D flip-flop.\n\nJK FLIP-FLOP:\n- J = Set, K = Reset\n- Solves SR forbidden state by toggling when J=K=1\n\nTruth Table (on clock edge):\nJ K | Q(next)\n0 0 | Q(prev) (HOLD)\n0 1 | 0 (RESET)\n1 0 | 1 (SET)\n1 1 | NOT Q(prev) (TOGGLE)\n\nRace-around condition: When J=K=1 and clock is HIGH too long, Q toggles multiple times. Solved with edge-triggering or master-slave configuration.\n\nD FLIP-FLOP (Data flip-flop):\n- Single input D\n- On clock edge: Q = D (samples and holds)\n- Most widely used flip-flop\n\nTruth Table (on clock edge):\nD | Q(next)\n0 | 0 (RESET)\n1 | 1 (SET)\n\nInternal implementation: Connect D to J and NOT D to K.\n\nApplication: JK for frequency dividers and counters. D for registers, pipeline stages, and synchronizers.\n\nTry it: Toggle J,K,CLK and observe Q toggling when J=K=1 on clock edge.";
+      }
+
+      // ========== EXPERIMENT 12: COUNTERS AND REGISTERS ==========
+      if ((q.includes('experiment 12') || q.includes('exp 12') || q.includes('exp12')) && (q.includes('counter') || q.includes('register'))) {
+        return "EXPERIMENT 12: COUNTERS AND REGISTERS\n\nObjective: Build 3-bit ripple counter and 4-bit shift register.\n\nRIPPLE COUNTER (Asynchronous):\n- Chains three T flip-flops or JK configured as toggles\n- Each flip-flop output clocks the next\n- Count sequence: 000 → 001 → 010 → 011 → 100 → 101 → 110 → 111 → 000\n\nPropagation delay: Ripples through stages, causing momentary glitches. For high-speed, use synchronous counters.\n\nMOD-N Counter: Add NAND gate to detect count N and reset to 0.\n\nSHIFT REGISTER:\n- Chains D flip-flops in series\n- On each clock, data shifts from left to right\n\nTypes:\n- SISO: Serial In, Serial Out\n- SIPO: Serial In, Parallel Out (most common)\n- PISO: Parallel In, Serial Out\n- PIPO: Parallel In, Parallel Out\n\nExample: Load 1011 serially → after 4 clocks, parallel output shows 1,0,1,1\n\nApplication: Counters in timers and program counters. Shift registers in serial-to-parallel conversion and delay lines.\n\nTry it: Press STEP button repeatedly to see counter increment or shift register shift.";
+      }
+
+      // ========== GENERAL EXPERIMENT HELP ==========
+      if ((q.includes('experiment') || q.includes('exp')) && (q.includes('list') || q.includes('all') || q.includes('available'))) {
+        return "SRM VoxLogic includes 12 experiments covering the complete DLD curriculum:\n\n1. Logic Gates and Truth Tables (Basic)\n2. Universal Gates using NAND and NOR (Combinational)\n3. Half Adder and Subtractor (Arithmetic)\n4. Full Adder and Subtractor (Arithmetic)\n5. 4-bit Ripple Carry Adder (Arithmetic)\n6. BCD Adder Design (Arithmetic)\n7. Code Converters - BCD/Gray (Converters)\n8. Encoders and Decoders (Combinational)\n9. Multiplexer and Demultiplexer (Combinational)\n10. SR Flip-Flop using NAND (Sequential)\n11. JK and D Flip-Flops (Sequential)\n12. Counters and Registers (Sequential)\n\nClick any experiment in the left sidebar to load it. Each has voice narration available in the Script tab.";
+      }
+
+      if ((q.includes('which experiment') || q.includes('what experiment')) && (q.includes('current') || q.includes('loaded'))) {
+        const exp = EXPERIMENTS.find(e => e.id === currentExp);
+        return `You are currently on Experiment ${currentExp}: ${exp.name.replace('\n', ' ')}. ${exp.desc} You can view the truth table, waveform, and Boolean expression for this circuit on the right panel. Click the Script tab and press NARRATE for audio explanation.`;
+      }
+
+      // ========== CIRCUIT ANALYSIS ==========
+      if (q.includes('my circuit') || q.includes('current circuit') || q.includes('what do i have') || q.includes('analyze my circuit')) {
+        const gateCount = gates.length;
+        const inputCount = gates.filter(g => g.type === 'INPUT').length;
+        const outputCount = gates.filter(g => g.type === 'OUTPUT').length;
+        const gateTypes = [...new Set(gates.map(g => g.type))].filter(t => t !== 'INPUT' && t !== 'OUTPUT');
+        const wireCount = wires.length;
+
+        if (gateCount === 0) {
+          return "Your canvas is currently empty. To start building a circuit, drag logic gates from the left palette onto the canvas. Then use the Wire tool to connect them. You can also load a pre-built experiment from the left sidebar.";
+        }
+
+        let response = `CIRCUIT ANALYSIS:\n\n`;
+        response += `Total gates: ${gateCount}\n`;
+        response += `Input nodes: ${inputCount}\n`;
+        response += `Output nodes: ${outputCount}\n`;
+        response += `Wire connections: ${wireCount}\n`;
+
+        if (gateTypes.length) {
+          response += `Gate types present: ${gateTypes.join(', ')}\n`;
+        }
+
+        if (inputCount > 0 && outputCount > 0) {
+          response += `\nYour circuit is ready for simulation. Double-click any INPUT node to toggle its value between 0 and 1. Watch how the outputs change in real time. Green wires indicate logic 1, dim wires indicate logic 0.`;
+        } else if (inputCount === 0) {
+          response += `\nYour circuit has no INPUT nodes. Drag INPUT gates from the palette and connect them to your circuit.`;
+        } else if (outputCount === 0) {
+          response += `\nYour circuit has no OUTPUT nodes. Drag OUTPUT gates from the palette to see the results of your circuit.`;
+        }
+
+        if (wireCount === 0 && gateCount > 0) {
+          response += `\n\nYou have gates but no wire connections. Select the Wire tool (W key), click an output port, then click an input port to connect them.`;
+        }
+
+        response += `\n\nYou can click the Auto Truth Table button (double right arrow) to test all input combinations automatically.`;
+        return response;
+      }
+
+      // ========== TROUBLESHOOTING ==========
+      if ((q.includes('not working') || q.includes('not responding') || q.includes('stuck') || q.includes('error')) && !q.includes('i am stuck')) {
+        return "TROUBLESHOOTING TIPS:\n\n1. Refresh the browser page and try again\n2. Click the Reset button to reload the current experiment\n3. Make sure JavaScript is enabled in your browser\n4. For voice features, ensure microphone permissions are granted\n5. For AI Tutor, check your internet connection\n6. If wires won't connect, ensure you are clicking exactly on the port circles\n7. If nothing appears on canvas, try dragging a gate from the left palette\n\nIf the problem persists, contact your DLD lab instructor.";
+      }
+
+      // ========== HOW TO USE SIMULATOR ==========
+      if ((q.includes('how to use') || q.includes('tutorial') || q.includes('getting started')) && !q.includes('help')) {
+        return "SRM VoxLogic TUTORIAL:\n\n1. ADD GATES: Drag from left palette onto canvas\n2. CONNECT: Click Wire tool (W key), click output port (right side), then input port (left side)\n3. TEST: Double-click INPUT nodes to toggle between 0 and 1\n4. DELETE: Select Delete tool (D key) or press Delete key on selected gate\n5. MOVE: Drag gates while in Select mode (S key)\n6. ZOOM: Scroll wheel or + and - keys\n7. PAN: Alt+drag or middle mouse button\n8. VIEW CIRCUIT: Click Fit View button (F key) to see everything\n\nRIGHT PANEL FEATURES:\n- Truth Table: Shows gate behavior\n- Info: Gate details and statistics\n- Waveform: Signal history over time\n- Boolean: Expression derived from circuit\n- Script: Voice narration for experiments\n- AI: Ask questions about digital logic\n- Keys: Keyboard shortcuts reference\n\nVoice commands available. Click MIC button and say 'help' for list.";
+      }
+
+      // ========== VOICE COMMANDS ==========
+      if (q.includes('voice command') || (q.includes('say') && q.includes('mic'))) {
+        return "VOICE COMMANDS AVAILABLE:\n\nSimulation Control:\n- 'simulate' or 'run' - Start auto-simulation\n- 'reset' or 'clear' - Reset current experiment\n- 'step' - Single simulation step\n- 'stop' - Stop narration\n\nNavigation:\n- 'next experiment' - Load next lab\n- 'previous experiment' - Load previous lab\n- 'zoom in' / 'zoom out' - Zoom controls\n- 'fit view' - Center all gates\n\nAnalysis:\n- 'explain' - Explain selected gate\n- 'truth table' - Show truth table\n- 'what is my circuit' - Analyze canvas\n- 'narrate' - Start voice narration\n\nAppearance:\n- 'dark mode' / 'light mode' - Toggle theme\n\nUndo/Redo:\n- 'undo' / 'redo' - History actions\n\nTo use: Click the MIC button, wait for listening indicator, then speak clearly. Say 'help' for this list again.";
+      }
+
+      // ========== SHORTCUTS ==========
+      if (q.includes('shortcut') || q.includes('keyboard') || (q.includes('key') && q.includes('press'))) {
+        return "KEYBOARD SHORTCUTS:\n\nS - Select tool\nW - Wire tool\nD - Delete tool\nF - Fit view (zoom to all gates)\n+ or = - Zoom in\n- or _ - Zoom out\nG - Toggle snap-to-grid\nT - Toggle dark/light theme\nSpace - Step simulation\nDelete - Delete selected gate\nCtrl+Z - Undo\nCtrl+Y - Redo\nCtrl+D - Duplicate selected gate\nCtrl+S - Export circuit\nEsc - Cancel current operation\nDouble-click - Toggle INPUT gate\nRight-click - Context menu\nAlt+Drag - Pan canvas\n\nThese shortcuts help you work faster. Try them out!";
+      }
+
+      // ========== BOOLEAN ALGEBRA ==========
+      if (q.includes('boolean algebra') || q.includes('boolean law') || q.includes('boolean expression')) {
+        return "BOOLEAN ALGEBRA LAWS:\n\nIdentity Laws:\n- A · 1 = A\n- A + 0 = A\n\nNull Laws:\n- A · 0 = 0\n- A + 1 = 1\n\nIdempotent Laws:\n- A · A = A\n- A + A = A\n\nComplement Laws:\n- A · Ā = 0\n- A + Ā = 1\n\nDeMorgan's Theorems:\n- (A · B)' = A' + B'\n- (A + B)' = A' · B'\n\nDistributive Laws:\n- A · (B + C) = A·B + A·C\n- A + (B·C) = (A+B) · (A+C)\n\nAbsorption Laws:\n- A + (A·B) = A\n- A · (A+B) = A\n\nThese laws help simplify complex Boolean expressions to use fewer gates.";
+      }
+
+      if (q.includes('de morgan') || q.includes('demorgan')) {
+        return "DE MORGAN'S THEOREMS:\n\nFirst Theorem: (A · B)' = A' + B'\nThe complement of a product equals the sum of complements.\n\nSecond Theorem: (A + B)' = A' · B'\nThe complement of a sum equals the product of complements.\n\nFor multiple variables:\n- (A·B·C)' = A' + B' + C'\n- (A+B+C)' = A' · B' · C'\n\nApplication in Circuit Design:\n- Convert AND-OR circuits to NAND-NAND\n- Convert OR-AND circuits to NOR-NOR\n- Simplify complex Boolean expressions\n- Build universal gates\n\nExample: NOT (A AND B) can be built as (NOT A) OR (NOT B)\nThis is why NAND and NOR are universal gates!";
+      }
+
+      // ========== KARNAUGH MAP ==========
+      if (q.includes('karnaugh') || q.includes('k-map') || q.includes('k map')) {
+        return "KARNAUGH MAP (K-MAP):\n\nA K-map is a visual method for simplifying Boolean expressions.\n\n2-Variable K-map:\nCells: 00, 01, 11, 10 (Gray code order)\nAdjacent cells differ by one variable\n\n3-Variable K-map:\n4x2 grid with Gray code on rows and columns\n\n4-Variable K-map:\n4x4 grid, wrap-around adjacency\n\nGrouping Rules:\n- Groups must be powers of 2 (1,2,4,8,16)\n- Groups must be rectangles (including wrap-around)\n- Larger groups give simpler terms\n- Each 1 must be in at least one group\n- Groups can overlap\n\nSimplified expression = OR of all groups\n\nExample: For sum of minterms, each group eliminates variables that change within the group.\n\nK-maps work well up to 6 variables. Beyond that, use Quine-McCluskey algorithm.";
+      }
+
+      // ========== NUMBER SYSTEMS ==========
+      if (q.includes('binary') || q.includes('decimal') || q.includes('hex') || q.includes('number system')) {
+        return "NUMBER SYSTEMS IN DIGITAL LOGIC:\n\nBINARY (Base 2):\n- Digits: 0, 1\n- Each position represents power of 2\n- Example: 1011₂ = 1×8 + 0×4 + 1×2 + 1×1 = 11₁₀\n\nDECIMAL (Base 10):\n- Digits: 0-9\n- Convert to binary by repeated division by 2\n\nHEXADECIMAL (Base 16):\n- Digits: 0-9, A=10, B=11, C=12, D=13, E=14, F=15\n- Each hex digit = 4 binary bits\n- Example: 1F₁₆ = 0001 1111₂ = 31₁₀\n\nBCD (Binary Coded Decimal):\n- Each decimal digit encoded in 4 bits\n- 0=0000, 1=0001, ..., 9=1001\n- Invalid codes: 1010 to 1111\n\nGRAY CODE:\n- Consecutive numbers differ by 1 bit\n- Used in encoders to prevent errors\n\nBinary to Gray: G_i = B_i XOR B_{i+1} (with G_n = B_n)";
+      }
+
+      // ========== TWO'S COMPLEMENT ==========
+      if (q.includes('two complement') || q.includes('2 complement') || q.includes('signed')) {
+        return "TWO'S COMPLEMENT (Signed Binary Numbers):\n\nRepresentation:\n- Positive numbers: same as binary\n- Negative numbers: complement all bits then add 1\n\nExample (4-bit):\n+5 = 0101\n-5 = complement 1010 + 1 = 1011\n\nRange for n bits: -2^(n-1) to +2^(n-1)-1\n- 4-bit range: -8 to +7\n\nBenefits:\n- Single representation for zero (0000)\n- Addition works for both positive and negative\n- Subtraction = addition of two's complement\n\nAdding signed numbers:\n- Add normally, ignore final carry\n- Check overflow: different sign inputs and result sign opposite to both inputs\n\nExample: 5 + (-3) = 0101 + 1101 = 0010 (with carry out) = +2\n\nThis is how computers perform signed arithmetic.";
+      }
+
+      // ========== SEQUENTIAL VS COMBINATIONAL ==========
+      if (q.includes('sequential') && q.includes('combinational')) {
+        return "COMBINATIONAL vs SEQUENTIAL CIRCUITS:\n\nCOMBINATIONAL CIRCUITS:\n- Output depends ONLY on current inputs\n- No memory or feedback\n- Examples: AND, OR, XOR, adders, multiplexers, encoders\n- Truth table fully defines behavior\n- No clock required\n\nSEQUENTIAL CIRCUITS:\n- Output depends on current inputs AND previous state (memory)\n- Contains feedback loops\n- Examples: Flip-flops, latches, counters, registers\n- State diagram defines behavior\n- Requires clock signal (usually)\n- Can store information\n\nKey Difference: Combinational has no memory; Sequential can remember past inputs.\n\nAnalogy: Combinational = vending machine that forgets after each transaction; Sequential = vending machine that remembers your money inserted.";
+      }
+
+      // ========== CLOCK AND TIMING ==========
+      if (q.includes('clock') || q.includes('timing') || q.includes('frequency')) {
+        return "CLOCK SIGNALS IN DIGITAL CIRCUITS:\n\nClock: Periodic square wave that synchronizes sequential circuits.\n\nParameters:\n- Frequency: Cycles per second (Hz)\n- Period: Time for one cycle (T = 1/f)\n- Duty cycle: Percentage of time signal is HIGH\n- Rise time: Time from LOW to HIGH\n- Fall time: Time from HIGH to LOW\n\nEdge Types:\n- Rising edge: Transition from 0 to 1\n- Falling edge: Transition from 1 to 0\n- Edge-triggered: Flip-flops change only on clock edge\n\nApplications:\n- Synchronize flip-flops and registers\n- Generate timing for counters\n- Create delays in shift registers\n- Clock distribution in CPUs\n\nIn SRM VoxLogic, use the STEP button to manually advance the clock. Each press simulates one clock edge for sequential circuits like flip-flops and counters.";
+      }
+
+      // ========== APPLICATION QUESTIONS ==========
+      if (q.includes('real world') || q.includes('application') || q.includes('used for')) {
+        return "REAL-WORLD APPLICATIONS OF DIGITAL LOGIC:\n\nAND Gate: Security systems (all conditions met), car ignition (key AND brake)\n\nOR Gate: Alarm systems (any trigger), emergency shutdown\n\nNOT Gate: Invert signals, create complementary outputs\n\nNAND/NOR: Universal building blocks - entire CPUs can be built from NAND gates\n\nXOR: Adder circuits, parity generators, error detection, encryption\n\nAdders: Arithmetic Logic Units (ALUs) in all computers and calculators\n\nMultiplexers: Data routing, telephone networks, memory selection\n\nDecoders: Memory address decoding, seven-segment display drivers\n\nFlip-flops: Registers, memory cells, frequency dividers, debouncing switches\n\nCounters: Digital clocks, timers, program counters, frequency meters\n\nShift registers: Serial communication (USB, Ethernet), delay lines, LED drivers\n\nAll digital electronics around you - phones, computers, cars, appliances - are built from these fundamental building blocks.";
+      }
+
+      // ========== DEFAULT / FALLBACK ==========
+      // Check if question contains any gate type
+      const gateTypesList = ['and', 'or', 'not', 'nand', 'nor', 'xor', 'xnor'];
+      const mentionedGate = gateTypesList.find(g => q.includes(g));
+      if (mentionedGate) {
+        return generateAIResponse(`${mentionedGate} gate`);
+      }
+
+      // Check if question contains any experiment number
+      const expMatch = q.match(/experiment\s*(\d+)|exp\s*(\d+)|#?(\d+)\s*exp/i);
+      if (expMatch) {
+        const expNum = parseInt(expMatch[1] || expMatch[2] || expMatch[3]);
+        if (expNum >= 1 && expNum <= 12) {
+          return generateAIResponse(`experiment ${expNum}`);
+        }
+      }
+
+      // Default intelligent response
+      return `I am the SRM VoxLogic AI Tutor for digital logic design. I can help you with:\n\n1. LOGIC GATES: AND, OR, NOT, NAND, NOR, XOR, XNOR\n   Ask me "explain NAND gate" or "what is XOR gate"\n\n2. EXPERIMENTS 1-12: Ask about any experiment\n   Example: "tell me about experiment 3" or "what is half adder"\n\n3. YOUR CIRCUIT: Ask "what is my circuit" to analyze your current design\n\n4. BOOLEAN ALGEBRA: Ask about DeMorgan's laws or simplification\n\n5. TROUBLESHOOTING: Ask "how to use simulator" or for keyboard shortcuts\n\n6. VOICE COMMANDS: Say "help" after clicking MIC button\n\nWhat would you like to learn about digital logic today?`;
+    }
+    function quickAsk(text) {
+      document.getElementById('aiInput').value = text;
+      sendAI();
+      switchTab('ai');
+    }
+    // The intelligent response generator (NO APIS)
+    // The intelligent response generator (NO APIS) - Complete Version
+    function getCircuitContext() {
+      try {
+        if (!gates || gates.length === 0) return 'Canvas is empty.';
+
+        const gateCount = gates.length;
+        const inputCount = gates.filter(g => g.type === 'INPUT').length;
+        const outputCount = gates.filter(g => g.type === 'OUTPUT').length;
+        const wireCount = wires ? wires.length : 0;
+
+        return `${gateCount} gates (${inputCount} inputs, ${outputCount} outputs) with ${wireCount} connections.`;
+      } catch (e) {
+        return 'Circuit is ready for simulation.';
+      }
     }
 
     /* ═══════════════════════════ CONTEXT MENU ═══════════════════════════ */
@@ -3581,7 +4189,7 @@
       document.getElementById('statusTool').textContent = t.toUpperCase();
     }
     function confirmClear() { showModal('clearModal'); }
-    function clearCanvas() { hideModal('clearModal'); saveUndo(); waveHistory = {}; loadExperiment(currentExp); }
+    function clearCanvas() { hideModal('clearModal'); saveUndo(); waveHistory = {}; if (currentExp === 0) loadBlank(); else loadExperiment(currentExp); }
     function fitView() {
       if (!gates.length) { resetView(); return; }
       const xs = gates.map(g => g.x), ys = gates.map(g => g.y);
