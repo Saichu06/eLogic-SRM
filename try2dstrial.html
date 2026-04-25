@@ -2400,6 +2400,7 @@
   <script>
     /* ═══════════════════════════ DATA ═══════════════════════════ */
     const EXPERIMENTS = [
+      { id: 0, name: "Blank Canvas\nStart Fresh", desc: "Empty workspace. Drag gates from the palette to build your own circuit from scratch.", tag: "basic" },
       { id: 1, name: "Logic Gates\nTruth Tables", desc: "Basic gates: AND, OR, NOT, NAND, NOR, XOR, XNOR. Build and test all fundamental logic gates.", tag: "basic" },
       { id: 2, name: "Universal Gates\nNAND & NOR", desc: "Realize AND, OR, NOT using only NAND or only NOR gates.", tag: "combo" },
       { id: 3, name: "Half Adder &\nSubtractor", desc: "1-bit addition and subtraction: Sum = A⊕B, Carry = A·B", tag: "combo" },
@@ -2416,6 +2417,7 @@
 
     // Expected output count per experiment
     const EXP_EXPECTED_OUTPUTS = {
+      0: 1,  // Blank canvas expects 1 output (optional)
       1: 1, 2: 1, 3: 2, 4: 2, 5: 3,
       6: 2, 7: 4, 8: 1, 9: 1, 10: 2,
       11: 2, 12: 2
@@ -2712,18 +2714,50 @@
       saveUndo(); currentExp = id;
       document.querySelectorAll('.exp-item').forEach(el => el.classList.remove('active'));
       document.getElementById(`exp-${id}`)?.classList.add('active');
-      document.getElementById('statusExp').textContent = String(id).padStart(2, '0');
-      document.getElementById('aiContext').textContent = `EXP ${String(id).padStart(2, '0')}`;
+      document.getElementById('statusExp').textContent = id === 0 ? '00' : String(id).padStart(2, '0');
+      document.getElementById('aiContext').textContent = id === 0 ? 'BLANK' : `EXP ${String(id).padStart(2, '0')}`;
+
       gates = []; wires = []; selectedGate = null; wireStart = null; waveHistory = {};
       panX = 0; panY = 0; zoom = 1; updateZoomLabel();
-      gates = getExpLayout(id);
+
+      if (id !== 0) {
+        gates = getExpLayout(id);
+      } else {
+        // BLANK CANVAS - add a default OUTPUT bulb at center
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        gates = [
+          {
+            id: Date.now() + Math.random(),
+            type: 'OUTPUT',
+            x: centerX - 40,
+            y: centerY - 30,
+            label: 'Y',
+            inputs: 1,
+            inputValues: [0],
+            outputValue: 0,
+            w: 80,
+            h: 60,
+            rotation: 0,
+            _everGlowed: false
+          }
+        ];
+      }
+
       gates.forEach(g => { g._everGlowed = false; });
       rebuildAutoSimCombos();
       simulateAll();
-      const exp = EXPERIMENTS.find(e => e.id === id);
-      notify(`EXP ${id}: ${exp.name.replace('\n', ' ')}`, 'ok');
+
+      if (id === 0) {
+        notify(`BLANK CANVAS — OUTPUT bulb ready. Drag gates and connect to Y`, 'ok');
+        if (voiceEnabled) speak(`Blank canvas with an output bulb. Drag gates from the palette and connect them to the Y output to test your circuit.`);
+      } else {
+        const exp = EXPERIMENTS.find(e => e.id === id);
+        notify(`EXP ${id}: ${exp.name.replace('\n', ' ')}`, 'ok');
+        if (voiceEnabled) speak(`Experiment ${id}: ${exp.name.replace('\n', ' ')}. ${exp.desc}`);
+      }
+
       buildVoiceScript(id);
-      if (voiceEnabled) speak(`Experiment ${id}: ${exp.name.replace('\n', ' ')}. ${exp.desc}`);
       clearTTPanel(); updateStatus(); updateBooleanPanel();
     }
 
