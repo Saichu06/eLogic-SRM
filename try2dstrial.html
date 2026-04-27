@@ -2913,7 +2913,7 @@
     }
 
     function makeGate(type, x, y, label) {
-      const inputs = GATE_TYPES.find(g => g.type === type)?.inputs || 2;
+      const inputs = type === 'OUTPUT' ? 1 : type === 'INPUT' ? 1 : (GATE_TYPES.find(g => g.type === type)?.inputs || 2);
       return {
         id: Date.now() + Math.random(), type, x, y,
         label: label || type, inputs,
