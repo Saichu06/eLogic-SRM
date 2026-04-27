@@ -1840,8 +1840,9 @@
         <button class="tbtn" onclick="switchTab('shortcuts')"><span>⌨</span><span
             class="tbtn-tip">Shortcuts</span></button>
         <div class="tsep"></div>
-        <button class="tbtn check-btn" id="checkCircuitBtn" onclick="checkCircuitConnections()">✔ CHECK<span
-            class="tbtn-tip">Check Circuit</span></button>
+        <button class="tbtn check-btn" id="checkCircuitBtn" onclick="checkCircuitConnections()"
+          style="width:auto;padding:0 8px;font-size:9px;font-family:'Share Tech Mono',monospace;letter-spacing:.5px">✔
+          CHECK / SIM<span class="tbtn-tip">Check & Simulate signal flow</span></button>
       </div>
 
 
@@ -3090,6 +3091,7 @@
         ctx.restore();
       }
       gates.forEach(drawGate);
+      drawSignalFlow();
       ctx.restore();
     }
 
@@ -3126,18 +3128,20 @@
         ctx.textAlign = 'right'; ctx.fillText(type, x + w - 4 / zoom, y + 8 / zoom); ctx.globalAlpha = 1;
       }
 
-      for (let i = 0; i < gate.inputs; i++) {
-        const p = portPos(gate, 'input', i);
-        const val = gate.inputValues[i] || 0;
-        ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-        ctx.fillStyle = val ? getCSSVar('--green') : (isDark ? '#0e1a28' : '#d8e8f0');
-        ctx.strokeStyle = val ? getCSSVar('--green') : getCSSVar('--border2');
-        ctx.lineWidth = 1.2 / zoom; ctx.fill(); ctx.stroke();
-        ctx.fillStyle = getCSSVar('--text-dim'); ctx.globalAlpha = .7;
-        ctx.font = `${Math.max(6, 6.5 / zoom)}px "Share Tech Mono"`;
-        ctx.textAlign = 'right';
-        ctx.fillText(gate.inputs <= 4 ? ['A', 'B', 'C', 'D'][i] : `I${i}`, p.x - 9 / zoom, p.y + 2.5 / zoom);
-        ctx.globalAlpha = 1;
+      if (type !== 'INPUT') {
+        for (let i = 0; i < gate.inputs; i++) {
+          const p = portPos(gate, 'input', i);
+          const val = gate.inputValues[i] || 0;
+          ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = val ? getCSSVar('--green') : (isDark ? '#0e1a28' : '#d8e8f0');
+          ctx.strokeStyle = val ? getCSSVar('--green') : getCSSVar('--border2');
+          ctx.lineWidth = 1.2 / zoom; ctx.fill(); ctx.stroke();
+          ctx.fillStyle = getCSSVar('--text-dim'); ctx.globalAlpha = .7;
+          ctx.font = `${Math.max(6, 6.5 / zoom)}px "Share Tech Mono"`;
+          ctx.textAlign = 'right';
+          ctx.fillText(gate.inputs <= 4 ? ['A', 'B', 'C', 'D'][i] : `I${i}`, p.x - 9 / zoom, p.y + 2.5 / zoom);
+          ctx.globalAlpha = 1;
+        }
       }
 
 
@@ -3166,7 +3170,6 @@
         ctx.fillStyle = outputValue ? getCSSVar('--green') : (isDark ? '#0e1a28' : '#d8e8f0');
         ctx.strokeStyle = outputValue ? getCSSVar('--green') : getCSSVar('--border2');
         ctx.lineWidth = 1.2 / zoom; ctx.fill(); ctx.stroke();
-
         ctx.fillStyle = outputValue ? getCSSVar('--green') : getCSSVar('--text-dim');
         ctx.globalAlpha = outputValue ? .95 : .6;
         ctx.font = `bold ${Math.max(8, 9 / zoom)}px "Share Tech Mono"`;
@@ -3305,10 +3308,21 @@
 
           // Outer glow
           if (ov) {
-            ctx.shadowColor = '#ffee44'; ctx.shadowBlur = 36 / zoom;
-            ctx.beginPath(); ctx.arc(bx, by, sz * 0.72, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255,238,68,0.18)'; ctx.fill();
             ctx.shadowBlur = 0;
+            // Wide ambient glow — radial gradient, no animation, steady
+            const glowGrad = ctx.createRadialGradient(bx, by, 0, bx, by, sz * 2.4);
+            glowGrad.addColorStop(0, 'rgba(255,235,50,0.60)');
+            glowGrad.addColorStop(0.35, 'rgba(255,200,0,0.28)');
+            glowGrad.addColorStop(0.7, 'rgba(255,150,0,0.10)');
+            glowGrad.addColorStop(1, 'rgba(255,100,0,0)');
+            ctx.beginPath(); ctx.arc(bx, by, sz * 2.4, 0, Math.PI * 2);
+            ctx.fillStyle = glowGrad; ctx.fill();
+            // Tight bright core
+            const coreGrad = ctx.createRadialGradient(bx, by, 0, bx, by, sz * 0.85);
+            coreGrad.addColorStop(0, 'rgba(255,255,210,0.75)');
+            coreGrad.addColorStop(1, 'rgba(255,220,0,0)');
+            ctx.beginPath(); ctx.arc(bx, by, sz * 0.85, 0, Math.PI * 2);
+            ctx.fillStyle = coreGrad; ctx.fill();
           }
 
           // Globe - proper teardrop/bulb shape using path
@@ -3325,7 +3339,7 @@
           ctx.closePath();
           if (ov) { ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 20 / zoom; }
           ctx.fillStyle = ov
-            ? 'rgba(255,230,50,0.88)'
+            ? 'rgba(255,248,130,0.97)'
             : (isDark ? 'rgba(25,45,68,0.65)' : 'rgba(190,210,230,0.65)');
           ctx.strokeStyle = ov ? '#ffd700' : (isDark ? 'rgba(100,150,200,0.55)' : 'rgba(70,110,150,0.5)');
           ctx.lineWidth = 1.6 / zoom;
@@ -3334,7 +3348,8 @@
           // Filament
           ctx.lineWidth = 1.1 / zoom;
           ctx.strokeStyle = ov ? 'rgba(210,100,5,0.95)' : (isDark ? 'rgba(55,85,115,0.5)' : 'rgba(100,130,160,0.4)');
-          if (ov) { ctx.shadowColor = '#ff8800'; ctx.shadowBlur = 7 / zoom; }
+          ctx.lineWidth = ov ? 2.2 / zoom : 1.1 / zoom;
+          if (ov) { ctx.shadowColor = '#ffaa00'; ctx.shadowBlur = 16 / zoom; }
           // Zigzag filament
           ctx.beginPath();
           ctx.moveTo(bx - sz * 0.13, by + sz * 0.28);
@@ -4643,11 +4658,78 @@
             d.textContent = '⚠ ' + w.replace('Warning: ', '');
             errBox.appendChild(d);
           });
+          if (someGlowing) startSignalFlowSim();
         }
       }
 
       popup.classList.add('show');
       overlay.classList.add('show');
+    }
+
+
+    /* ═══ SIGNAL FLOW SIMULATION ═══ */
+    let signalFlowActive = false;
+    let signalFlowWires = [];
+    let signalFlowFrame = 0;
+    let signalFlowAnimID = null;
+
+    function startSignalFlowSim() {
+      signalFlowActive = true;
+      signalFlowFrame = 0;
+      // Collect only wires that carry logic HIGH (value=1)
+      signalFlowWires = wires.filter(w => {
+        const fg = gates.find(g => g.id === w.fromGate);
+        return fg && fg.outputValue === 1;
+      });
+      notify('Signal flow simulation started — pulses show live signal paths', 'ok');
+      if (voiceEnabled) speak('Simulating signal flow. Watch the highlighted paths.');
+    }
+
+    function drawSignalFlow() {
+      if (!signalFlowActive || !signalFlowWires.length) return;
+      signalFlowFrame++;
+      // Auto-stop after 6 seconds (180 frames at 60fps)
+      if (signalFlowFrame > 360) { signalFlowActive = false; return; }
+
+      signalFlowWires.forEach((wire, wi) => {
+        const fg = gates.find(g => g.id === wire.fromGate);
+        const tg = gates.find(g => g.id === wire.toGate);
+        if (!fg || !tg) return;
+
+        const sp = portPos(fg, 'output', 0);
+        const ep = portPos(tg, 'input', wire.toPort);
+        const dx = ep.x - sp.x;
+
+        // Animate a bright pulse dot along the wire
+        const speed = 0.018;
+        const offset = (wi * 0.25) % 1; // stagger per wire
+        const t = ((signalFlowFrame * speed) + offset) % 1;
+
+        // Bezier point at t
+        const it = 1 - t;
+        const cp1x = sp.x + dx * 0.55, cp1y = sp.y;
+        const cp2x = ep.x - dx * 0.55, cp2y = ep.y;
+        const px = it * it * it * sp.x + 3 * it * it * t * cp1x + 3 * it * t * t * cp2x + t * t * t * ep.x;
+        const py = it * it * it * sp.y + 3 * it * it * t * cp1y + 3 * it * t * t * cp2y + t * t * t * ep.y;
+
+        ctx.save();
+        ctx.translate(panX, panY); ctx.scale(zoom, zoom);
+
+        // Pulse glow
+        const grad = ctx.createRadialGradient(px, py, 0, px, py, 10 / zoom);
+        grad.addColorStop(0, 'rgba(255,255,100,0.95)');
+        grad.addColorStop(0.3, 'rgba(0,255,136,0.6)');
+        grad.addColorStop(1, 'rgba(0,255,136,0)');
+        ctx.beginPath(); ctx.arc(px, py, 10 / zoom, 0, Math.PI * 2);
+        ctx.fillStyle = grad; ctx.fill();
+
+        // Bright core dot
+        ctx.beginPath(); ctx.arc(px, py, 3.5 / zoom, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 12 / zoom;
+        ctx.fill(); ctx.shadowBlur = 0;
+        ctx.restore();
+      });
     }
     function dismissCheckPopup() {
       document.getElementById('circuitCheckPopup').classList.remove('show');
