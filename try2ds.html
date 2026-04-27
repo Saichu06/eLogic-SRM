@@ -1840,8 +1840,9 @@
         <button class="tbtn" onclick="switchTab('shortcuts')"><span>⌨</span><span
             class="tbtn-tip">Shortcuts</span></button>
         <div class="tsep"></div>
-        <button class="tbtn check-btn" id="checkCircuitBtn" onclick="checkCircuitConnections()">✔ CHECK<span
-            class="tbtn-tip">Check Circuit</span></button>
+        <button class="tbtn check-btn" id="checkCircuitBtn" onclick="checkCircuitConnections()"
+          style="width:auto;padding:0 8px;font-size:9px;font-family:'Share Tech Mono',monospace;letter-spacing:.5px">✔
+          CHECK<span class="tbtn-tip">Check signal flow</span></button>
       </div>
 
 
@@ -2081,7 +2082,7 @@
             <div class="hm-card">
               <div class="hm-label"><span class="hm-dot"></span>🧩 Gate Palette</div>
               <div class="hm-text">Drag AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF gates onto the canvas. Also drag INPUT
-                and OUTPUT nodes. Click any gate chip to preview its info.</div>
+                and OUTPUT nodes. Click any gate chip to preview its info. Double click the switches to on or off</div>
             </div>
 
             <div class="hm-card">
@@ -2133,7 +2134,8 @@
                   style="color:var(--green)">"next experiment"</span>, <span
                   style="color:var(--green)">"explain"</span>, <span style="color:var(--green)">"truth table"</span>,
                 <span style="color:var(--green)">"zoom in"</span>, <span style="color:var(--green)">"undo"</span>, <span
-                  style="color:var(--green)">"dark mode"</span>.</div>
+                  style="color:var(--green)">"dark mode"</span>.
+              </div>
             </div>
 
             <div class="hm-card">
@@ -2399,6 +2401,7 @@
   <script>
     /* ═══════════════════════════ DATA ═══════════════════════════ */
     const EXPERIMENTS = [
+      { id: 0, name: "Blank Canvas\nStart Fresh", desc: "Empty workspace. Drag gates from the palette to build your own circuit from scratch.", tag: "basic" },
       { id: 1, name: "Logic Gates\nTruth Tables", desc: "Basic gates: AND, OR, NOT, NAND, NOR, XOR, XNOR. Build and test all fundamental logic gates.", tag: "basic" },
       { id: 2, name: "Universal Gates\nNAND & NOR", desc: "Realize AND, OR, NOT using only NAND or only NOR gates.", tag: "combo" },
       { id: 3, name: "Half Adder &\nSubtractor", desc: "1-bit addition and subtraction: Sum = A⊕B, Carry = A·B", tag: "combo" },
@@ -2412,6 +2415,14 @@
       { id: 11, name: "JK & D\nFlip-Flops", desc: "JK flip-flop (no invalid state) and D flip-flop.", tag: "seq" },
       { id: 12, name: "Counters &\nRegisters", desc: "3-bit ripple counter and 4-bit shift register.", tag: "seq" },
     ];
+
+    // Expected output count per experiment
+    const EXP_EXPECTED_OUTPUTS = {
+      0: 1,  // Blank canvas expects 1 output (optional)
+      1: 1, 2: 1, 3: 2, 4: 2, 5: 3,
+      6: 2, 7: 4, 8: 1, 9: 1, 10: 2,
+      11: 2, 12: 2
+    };
 
     /* ═══════════════════════ VOICE SCRIPTS PER EXPERIMENT ═══════════════════════ */
     const EXP_SCRIPTS = {
@@ -2704,27 +2715,60 @@
       saveUndo(); currentExp = id;
       document.querySelectorAll('.exp-item').forEach(el => el.classList.remove('active'));
       document.getElementById(`exp-${id}`)?.classList.add('active');
-      document.getElementById('statusExp').textContent = String(id).padStart(2, '0');
-      document.getElementById('aiContext').textContent = `EXP ${String(id).padStart(2, '0')}`;
+      document.getElementById('statusExp').textContent = id === 0 ? '00' : String(id).padStart(2, '0');
+      document.getElementById('aiContext').textContent = id === 0 ? 'BLANK' : `EXP ${String(id).padStart(2, '0')}`;
+
       gates = []; wires = []; selectedGate = null; wireStart = null; waveHistory = {};
       panX = 0; panY = 0; zoom = 1; updateZoomLabel();
-      gates = getExpLayout(id);
+
+      if (id !== 0) {
+        gates = getExpLayout(id);
+      } else {
+        // BLANK CANVAS - add a default OUTPUT bulb at center
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        gates = [
+          {
+            id: Date.now() + Math.random(),
+            type: 'OUTPUT',
+            x: centerX - 40,
+            y: centerY - 30,
+            label: 'Y',
+            inputs: 1,
+            inputValues: [0],
+            outputValue: 0,
+            w: 80,
+            h: 60,
+            rotation: 0,
+            _everGlowed: false
+          }
+        ];
+      }
+
+      gates.forEach(g => { g._everGlowed = false; });
       rebuildAutoSimCombos();
       simulateAll();
-      const exp = EXPERIMENTS.find(e => e.id === id);
-      notify(`EXP ${id}: ${exp.name.replace('\n', ' ')}`, 'ok');
+
+      if (id === 0) {
+        notify(`BLANK CANVAS — OUTPUT bulb ready. Drag gates and connect to Y`, 'ok');
+        if (voiceEnabled) speak(`Blank canvas with an output bulb. Drag gates from the palette and connect them to the Y output to test your circuit.`);
+      } else {
+        const exp = EXPERIMENTS.find(e => e.id === id);
+        notify(`EXP ${id}: ${exp.name.replace('\n', ' ')}`, 'ok');
+        if (voiceEnabled) speak(`Experiment ${id}: ${exp.name.replace('\n', ' ')}. ${exp.desc}`);
+      }
+
       buildVoiceScript(id);
-      if (voiceEnabled) speak(`Experiment ${id}: ${exp.name.replace('\n', ' ')}. ${exp.desc}`);
       clearTTPanel(); updateStatus(); updateBooleanPanel();
     }
 
     /* ═════════════════ REBUILD AUTO-SIM INPUT COMBOS ═════════════════ */
     function rebuildAutoSimCombos() {
-      const inputs = gates.filter(g => g.type === 'INPUT');
+      const inputs = gates.filter(g => g.type === 'INPUT' && !g.manualLock);
       autoSimCombos = []; autoSimComboIndex = 0;
       if (!inputs.length) return;
       const n = Math.min(inputs.length, 6);
-      for (let i = 0; i < (1 << n); i++)autoSimCombos.push(i);
+      for (let i = 0; i < (1 << n); i++) autoSimCombos.push(i);
     }
 
     /* ═══════════════════════════ AUTO-SIM ENGINE ═══════════════════════════ */
@@ -2743,10 +2787,10 @@
     }
 
     function runSimTick() {
-      const inputs = gates.filter(g => g.type === 'INPUT');
+      // Only auto-cycle gates that are NOT manually locked
+      const inputs = gates.filter(g => g.type === 'INPUT' && !g.manualLock);
       if (!inputs.length) { simulateAll(); return; }
 
-      // Advance combo index
       if (autoSimCombos.length) {
         const combo = autoSimCombos[autoSimComboIndex % autoSimCombos.length];
         const n = Math.min(inputs.length, 6);
@@ -2761,7 +2805,6 @@
       simulateAll();
       logSim(`TICK ${simTick} — combo ${autoSimComboIndex}`);
 
-      // Flash sim indicator
       const ind = document.getElementById('simIndicator');
       ind.classList.add('stepping');
       setTimeout(() => ind.classList.remove('stepping'), 180);
@@ -2870,7 +2913,7 @@
     }
 
     function makeGate(type, x, y, label) {
-      const inputs = GATE_TYPES.find(g => g.type === type)?.inputs || 2;
+      const inputs = type === 'OUTPUT' ? 1 : type === 'INPUT' ? 1 : (GATE_TYPES.find(g => g.type === type)?.inputs || 2);
       return {
         id: Date.now() + Math.random(), type, x, y,
         label: label || type, inputs,
@@ -3048,6 +3091,7 @@
         ctx.restore();
       }
       gates.forEach(drawGate);
+      drawSignalFlow();
       ctx.restore();
     }
 
@@ -3084,39 +3128,129 @@
         ctx.textAlign = 'right'; ctx.fillText(type, x + w - 4 / zoom, y + 8 / zoom); ctx.globalAlpha = 1;
       }
 
-      for (let i = 0; i < gate.inputs; i++) {
-        const p = portPos(gate, 'input', i);
-        const val = gate.inputValues[i] || 0;
-        ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-        ctx.fillStyle = val ? getCSSVar('--green') : (isDark ? '#0e1a28' : '#d8e8f0');
-        ctx.strokeStyle = val ? getCSSVar('--green') : getCSSVar('--border2');
+      if (type !== 'INPUT') {
+        for (let i = 0; i < gate.inputs; i++) {
+          const p = portPos(gate, 'input', i);
+          const val = gate.inputValues[i] || 0;
+          ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = val ? getCSSVar('--green') : (isDark ? '#0e1a28' : '#d8e8f0');
+          ctx.strokeStyle = val ? getCSSVar('--green') : getCSSVar('--border2');
+          ctx.lineWidth = 1.2 / zoom; ctx.fill(); ctx.stroke();
+          ctx.fillStyle = getCSSVar('--text-dim'); ctx.globalAlpha = .7;
+          ctx.font = `${Math.max(6, 6.5 / zoom)}px "Share Tech Mono"`;
+          ctx.textAlign = 'right';
+          ctx.fillText(gate.inputs <= 4 ? ['A', 'B', 'C', 'D'][i] : `I${i}`, p.x - 9 / zoom, p.y + 2.5 / zoom);
+          ctx.globalAlpha = 1;
+        }
+      }
+
+
+      // Mark final gate feeding OUTPUT
+      if (type !== 'OUTPUT') {
+        const feedsOutput = wires.some(w => {
+          if (w.fromGate !== gate.id) return false;
+          const tg = gates.find(g => g.id === w.toGate);
+          return tg && tg.type === 'OUTPUT';
+        });
+        if (feedsOutput) {
+          ctx.save();
+          ctx.font = `bold ${Math.max(6, 7 / zoom)}px "Share Tech Mono"`;
+          ctx.fillStyle = 'var(--yellow)';
+          ctx.globalAlpha = 0.85;
+          ctx.textAlign = 'center';
+          ctx.fillText('▶ FINAL', x + w / 2, y - 6 / zoom);
+          ctx.globalAlpha = 1;
+          ctx.restore();
+        }
+      }
+
+      if (type !== 'OUTPUT') {
+        const op = portPos(gate, 'output', 0);
+        ctx.beginPath(); ctx.arc(op.x, op.y, 5.5, 0, Math.PI * 2);
+        ctx.fillStyle = outputValue ? getCSSVar('--green') : (isDark ? '#0e1a28' : '#d8e8f0');
+        ctx.strokeStyle = outputValue ? getCSSVar('--green') : getCSSVar('--border2');
         ctx.lineWidth = 1.2 / zoom; ctx.fill(); ctx.stroke();
-        ctx.fillStyle = getCSSVar('--text-dim'); ctx.globalAlpha = .7;
-        ctx.font = `${Math.max(6, 6.5 / zoom)}px "Share Tech Mono"`;
-        ctx.textAlign = 'right';
-        ctx.fillText(gate.inputs <= 4 ? ['A', 'B', 'C', 'D'][i] : `I${i}`, p.x - 9 / zoom, p.y + 2.5 / zoom);
+        ctx.fillStyle = outputValue ? getCSSVar('--green') : getCSSVar('--text-dim');
+        ctx.globalAlpha = outputValue ? .95 : .6;
+        ctx.font = `bold ${Math.max(8, 9 / zoom)}px "Share Tech Mono"`;
+        ctx.textAlign = 'left'; ctx.fillText(String(outputValue), op.x + 9 / zoom, op.y + 3.5 / zoom);
         ctx.globalAlpha = 1;
       }
 
-      const op = portPos(gate, 'output', 0);
-      ctx.beginPath(); ctx.arc(op.x, op.y, 5.5, 0, Math.PI * 2);
-      ctx.fillStyle = outputValue ? getCSSVar('--green') : (isDark ? '#0e1a28' : '#d8e8f0');
-      ctx.strokeStyle = outputValue ? getCSSVar('--green') : getCSSVar('--border2');
-      ctx.lineWidth = 1.2 / zoom; ctx.fill(); ctx.stroke();
-
-      ctx.fillStyle = outputValue ? getCSSVar('--green') : getCSSVar('--text-dim');
-      ctx.globalAlpha = outputValue ? .95 : .6;
-      ctx.font = `bold ${Math.max(8, 9 / zoom)}px "Share Tech Mono"`;
-      ctx.textAlign = 'left'; ctx.fillText(String(outputValue), op.x + 9 / zoom, op.y + 3.5 / zoom);
-      ctx.globalAlpha = 1;
-
       if (type === 'INPUT') {
         const v = gate.inputValues[0];
+        // Draw toggle switch
+        const sw = w * 0.72, sh = h * 0.38;
+        const sx = x + (w - sw) / 2, sy = y + h / 2 - sh / 2;
+        const r = sh / 2;
+
+        // Track background
+        ctx.beginPath();
+        ctx.moveTo(sx + r, sy);
+        ctx.lineTo(sx + sw - r, sy);
+        ctx.arcTo(sx + sw, sy, sx + sw, sy + sh, r);
+        ctx.lineTo(sx + sw - r, sy + sh);
+        ctx.arcTo(sx, sy + sh, sx, sy, r);
+        ctx.lineTo(sx + r, sy);
+        ctx.closePath();
+        ctx.fillStyle = v
+          ? (isDark ? 'rgba(0,255,136,0.25)' : 'rgba(0,180,90,0.3)')
+          : (isDark ? 'rgba(20,40,60,0.7)' : 'rgba(180,200,220,0.7)');
+        ctx.strokeStyle = v ? getCSSVar('--green') : getCSSVar('--border2');
+        ctx.lineWidth = 1.2 / zoom;
+        ctx.fill(); ctx.stroke();
+
+        // Track label 0 / 1
+        ctx.font = `bold ${Math.max(7, 8 / zoom)}px "Share Tech Mono"`;
+        ctx.textBaseline = 'middle';
         ctx.fillStyle = v ? getCSSVar('--green') : getCSSVar('--text-dim');
-        ctx.font = `bold ${Math.max(14, 16 / zoom)}px "Share Tech Mono"`;
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(String(v), x + w / 2, y + h / 2); ctx.textBaseline = 'alphabetic';
+        ctx.globalAlpha = 0.7;
+        ctx.textAlign = v ? 'left' : 'right';
+        ctx.fillText(v ? '1' : '0', v ? sx + r * 0.55 : sx + sw - r * 0.55, sy + sh / 2);
+        ctx.globalAlpha = 1;
+
+        // Knob
+        const knobR = r * 0.78;
+        const rawKnobX = v ? sx + sw - r : sx + r;
+        const animP = gate._toggleAnim ? gate._toggleAnim.progress : 1;
+        const fromX = v ? sx + r : sx + sw - r;
+        const knobX = v ? sx + sw - r : sx + r;
+        ctx.beginPath(); ctx.arc(knobX, sy + sh / 2, knobR, 0, Math.PI * 2);
+        const kGrad = ctx.createRadialGradient(knobX - knobR * 0.25, sy + sh / 2 - knobR * 0.25, knobR * 0.05, knobX, sy + sh / 2, knobR);
+        if (v) {
+          kGrad.addColorStop(0, '#aaffcc');
+          kGrad.addColorStop(1, '#00cc66');
+        } else {
+          kGrad.addColorStop(0, isDark ? '#4a6a8a' : '#e0eaf5');
+          kGrad.addColorStop(1, isDark ? '#1e3248' : '#b0c8e0');
+        }
+        ctx.fillStyle = kGrad;
+        ctx.strokeStyle = v ? '#00ff88' : getCSSVar('--border2');
+        ctx.lineWidth = 1 / zoom;
+        if (v) { ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 8 / zoom; }
+        ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+        ctx.textBaseline = 'alphabetic';
       }
+
+      // Lock/Unlock button on INPUT gate
+      const btnR = Math.max(7, 8 / zoom);
+      const btnX = x + w - btnR - 4 / zoom;
+      const btnY = y + btnR + 4 / zoom;
+      ctx.beginPath(); ctx.arc(btnX, btnY, btnR, 0, Math.PI * 2);
+      ctx.fillStyle = gate.manualLock
+        ? 'rgba(255,215,0,0.18)'
+        : 'rgba(100,140,180,0.12)';
+      ctx.strokeStyle = gate.manualLock ? getCSSVar('--yellow') : getCSSVar('--border2');
+      ctx.lineWidth = 1 / zoom;
+      if (gate.manualLock) { ctx.shadowColor = getCSSVar('--yellow'); ctx.shadowBlur = 8 / zoom; }
+      ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+
+      // Lock icon
+      ctx.font = `${Math.max(7, 8 / zoom)}px serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = gate.manualLock ? getCSSVar('--yellow') : getCSSVar('--text-dim');
+      ctx.fillText(gate.manualLock ? '🔒' : '🔓', btnX, btnY);
+      ctx.textBaseline = 'alphabetic';
       ctx.restore();
     }
 
@@ -3162,7 +3296,7 @@
           ctx.quadraticCurveTo(cx - .2 * sz, cy - sz * .72, cx + sz * .52, cy);
           ctx.quadraticCurveTo(cx - .2 * sz, cy + sz * .72, cx - sz * .95, cy + sz * .72);
           ctx.quadraticCurveTo(cx - .35 * sz, cy, cx - sz * .95, cy - sz * .72); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(cx - sz * 1.12, cy - sz * .72); ctx.quadraticCurveTo(cx - sz * .62, cy, ctx - sz * 1.12, cy + sz * .72); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(cx - sz * 1.12, cy - sz * .72); ctx.quadraticCurveTo(cx - sz * .62, cy, cx - sz * 1.12, cy + sz * .72); ctx.stroke();
           ctx.beginPath(); ctx.arc(cx + sz * .66, cy, sz * .14, 0, Math.PI * 2); ctx.stroke(); break;
         case 'INPUT':
           ctx.strokeStyle = getCSSVar('--orange');
@@ -3170,58 +3304,105 @@
           rrect(cx - sz * .75, cy - sz * .5, sz * 1.5, sz, 4); ctx.fill(); ctx.stroke(); break;
         case 'OUTPUT': {
           const ov = gate.outputValue;
-          const bx = cx, by = cy - sz * 0.08;
-          const br = sz * 0.58;
+          const bx = cx, by = cy - sz * 0.15;
 
-          // Outer glow halo when ON
+          // Outer glow
           if (ov) {
-            ctx.shadowColor = '#ffee44'; ctx.shadowBlur = 28 / zoom;
-            ctx.beginPath(); ctx.arc(bx, by, br * 1.35, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255,238,68,0.10)'; ctx.fill();
             ctx.shadowBlur = 0;
+            // Wide ambient glow — radial gradient, no animation, steady
+            const glowGrad = ctx.createRadialGradient(bx, by, 0, bx, by, sz * 2.4);
+            glowGrad.addColorStop(0, 'rgba(255,235,50,0.60)');
+            glowGrad.addColorStop(0.35, 'rgba(255,200,0,0.28)');
+            glowGrad.addColorStop(0.7, 'rgba(255,150,0,0.10)');
+            glowGrad.addColorStop(1, 'rgba(255,100,0,0)');
+            ctx.beginPath(); ctx.arc(bx, by, sz * 2.4, 0, Math.PI * 2);
+            ctx.fillStyle = glowGrad; ctx.fill();
+            // Tight bright core
+            const coreGrad = ctx.createRadialGradient(bx, by, 0, bx, by, sz * 0.85);
+            coreGrad.addColorStop(0, 'rgba(255,255,210,0.75)');
+            coreGrad.addColorStop(1, 'rgba(255,220,0,0)');
+            ctx.beginPath(); ctx.arc(bx, by, sz * 0.85, 0, Math.PI * 2);
+            ctx.fillStyle = coreGrad; ctx.fill();
           }
 
-          // Bulb globe
-          ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2);
-          ctx.fillStyle = ov ? 'rgba(255,238,68,0.82)' : (isDark ? 'rgba(30,50,70,0.55)' : 'rgba(200,215,230,0.55)');
-          ctx.strokeStyle = ov ? '#ffd700' : (isDark ? 'rgba(120,160,200,0.6)' : 'rgba(80,120,160,0.5)');
-          ctx.lineWidth = 1.5 / zoom;
-          if (ov) { ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 14 / zoom; }
+          // Globe - proper teardrop/bulb shape using path
+          const br = sz * 0.60;
+          ctx.beginPath();
+          // Upper dome (arc)
+          ctx.arc(bx, by, br, Math.PI * 0.75, Math.PI * 0.25, false);
+          // Right side curves down to neck
+          ctx.bezierCurveTo(bx + br * 0.82, by + br * 0.88, bx + br * 0.38, by + br * 1.05, bx + br * 0.28, by + br * 1.18);
+          // Bottom flat connector between right and left neck
+          ctx.lineTo(bx - br * 0.28, by + br * 1.18);
+          // Left side curves back up
+          ctx.bezierCurveTo(bx - br * 0.38, by + br * 1.05, bx - br * 0.82, by + br * 0.88, bx + br * Math.cos(Math.PI * 0.75), by + br * Math.sin(Math.PI * 0.75));
+          ctx.closePath();
+          if (ov) { ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 20 / zoom; }
+          ctx.fillStyle = ov
+            ? 'rgba(255,248,130,0.97)'
+            : (isDark ? 'rgba(25,45,68,0.65)' : 'rgba(190,210,230,0.65)');
+          ctx.strokeStyle = ov ? '#ffd700' : (isDark ? 'rgba(100,150,200,0.55)' : 'rgba(70,110,150,0.5)');
+          ctx.lineWidth = 1.6 / zoom;
           ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
 
-          // Filament inside globe
-          ctx.lineWidth = 1 / zoom;
-          ctx.strokeStyle = ov ? 'rgba(200,120,10,0.9)' : (isDark ? 'rgba(60,90,120,0.5)' : 'rgba(100,130,160,0.4)');
-          if (ov) { ctx.shadowColor = '#ff8800'; ctx.shadowBlur = 6 / zoom; }
+          // Filament
+          ctx.lineWidth = 1.1 / zoom;
+          ctx.strokeStyle = ov ? 'rgba(210,100,5,0.95)' : (isDark ? 'rgba(55,85,115,0.5)' : 'rgba(100,130,160,0.4)');
+          ctx.lineWidth = ov ? 2.2 / zoom : 1.1 / zoom;
+          if (ov) { ctx.shadowColor = '#ffaa00'; ctx.shadowBlur = 16 / zoom; }
+          // Zigzag filament
           ctx.beginPath();
-          ctx.moveTo(bx - sz * 0.12, by + sz * 0.18);
-          ctx.quadraticCurveTo(bx - sz * 0.06, by - sz * 0.05, bx, by - sz * 0.22);
-          ctx.quadraticCurveTo(bx + sz * 0.06, by - sz * 0.05, bx + sz * 0.12, by + sz * 0.18);
+          ctx.moveTo(bx - sz * 0.13, by + sz * 0.28);
+          ctx.lineTo(bx - sz * 0.06, by + sz * 0.08);
+          ctx.lineTo(bx + sz * 0.03, by + sz * 0.22);
+          ctx.lineTo(bx + sz * 0.10, by - sz * 0.02);
+          ctx.lineTo(bx + sz * 0.03, by - sz * 0.18);
+          ctx.lineTo(bx - sz * 0.06, by - sz * 0.04);
+          ctx.lineTo(bx - sz * 0.13, by - sz * 0.18);
           ctx.stroke();
+          // Filament support wires
           ctx.beginPath();
-          ctx.moveTo(bx - sz * 0.12, by + sz * 0.18); ctx.lineTo(bx + sz * 0.12, by + sz * 0.18);
+          ctx.moveTo(bx - sz * 0.13, by + sz * 0.28); ctx.lineTo(bx - sz * 0.13, by + sz * 0.42);
+          ctx.moveTo(bx + sz * 0.03, by + sz * 0.22); ctx.lineTo(bx + sz * 0.03, by + sz * 0.42);
           ctx.stroke();
           ctx.shadowBlur = 0;
 
-          // Glint highlight (top-left shine)
-          ctx.beginPath(); ctx.arc(bx - br * 0.28, by - br * 0.28, br * 0.18, 0, Math.PI * 2);
-          ctx.fillStyle = ov ? 'rgba(255,255,220,0.55)' : 'rgba(255,255,255,0.18)';
-          ctx.fill();
+          // Shine highlight
+          ctx.beginPath(); ctx.arc(bx - br * 0.30, by - br * 0.32, br * 0.16, 0, Math.PI * 2);
+          ctx.fillStyle = ov ? 'rgba(255,255,230,0.6)' : 'rgba(255,255,255,0.18)'; ctx.fill();
+          // Second smaller shine
+          ctx.beginPath(); ctx.arc(bx - br * 0.14, by - br * 0.50, br * 0.07, 0, Math.PI * 2);
+          ctx.fillStyle = ov ? 'rgba(255,255,230,0.4)' : 'rgba(255,255,255,0.10)'; ctx.fill();
 
-          // Base cap
-          const capW = sz * 0.42, capH = sz * 0.22, capY = by + br - sz * 0.04;
-          ctx.strokeStyle = ov ? '#cc9900' : (isDark ? 'rgba(80,120,160,0.5)' : 'rgba(80,120,160,0.45)');
-          ctx.fillStyle = ov ? 'rgba(200,150,0,0.55)' : (isDark ? 'rgba(20,40,60,0.6)' : 'rgba(180,200,220,0.5)');
+          // Metal base (threaded cap) - NO rectangle, proper trapezoid
+          const capTopW = sz * 0.56, capBotW = sz * 0.44;
+          const capTopY = by + br * 1.12, capBotY = by + br * 1.52;
+          ctx.beginPath();
+          ctx.moveTo(bx - capTopW / 2, capTopY);
+          ctx.lineTo(bx + capTopW / 2, capTopY);
+          ctx.lineTo(bx + capBotW / 2, capBotY);
+          ctx.lineTo(bx - capBotW / 2, capBotY);
+          ctx.closePath();
+          ctx.fillStyle = ov ? 'rgba(190,140,0,0.65)' : (isDark ? 'rgba(22,42,62,0.7)' : 'rgba(170,192,215,0.6)');
+          ctx.strokeStyle = ov ? '#b8860b' : (isDark ? 'rgba(60,95,130,0.55)' : 'rgba(80,120,155,0.5)');
           ctx.lineWidth = 1.2 / zoom;
-          rrect(bx - capW / 2, capY, capW, capH, 3); ctx.fill(); ctx.stroke();
+          ctx.fill(); ctx.stroke();
 
-          // Screw lines on base cap
-          ctx.strokeStyle = ov ? 'rgba(160,110,0,0.7)' : (isDark ? 'rgba(50,80,110,0.5)' : 'rgba(100,130,160,0.5)');
-          ctx.lineWidth = 0.8 / zoom;
-          for (let li = 1; li <= 2; li++) {
-            const ly = capY + capH * (li / 3);
-            ctx.beginPath(); ctx.moveTo(bx - capW / 2 + 2 / zoom, ly); ctx.lineTo(bx + capW / 2 - 2 / zoom, ly); ctx.stroke();
+          // Thread lines on cap
+          ctx.strokeStyle = ov ? 'rgba(150,100,0,0.7)' : (isDark ? 'rgba(45,75,105,0.5)' : 'rgba(95,125,160,0.45)');
+          ctx.lineWidth = 0.7 / zoom;
+          for (let li = 1; li <= 3; li++) {
+            const t = li / 4;
+            const ly = capTopY + (capBotY - capTopY) * t;
+            const hw = capTopW / 2 + (capBotW / 2 - capTopW / 2) * t - 1 / zoom;
+            ctx.beginPath(); ctx.moveTo(bx - hw, ly); ctx.lineTo(bx + hw, ly); ctx.stroke();
           }
+
+          // Contact pin at bottom
+          ctx.beginPath();
+          ctx.arc(bx, capBotY + sz * 0.08, sz * 0.07, 0, Math.PI * 2);
+          ctx.fillStyle = ov ? 'rgba(220,180,0,0.85)' : (isDark ? 'rgba(50,80,110,0.6)' : 'rgba(120,150,180,0.5)');
+          ctx.fill();
           break;
         }
       }
@@ -3347,6 +3528,24 @@
         if (port && !e.shiftKey) { wireStart = port; setTool('wire'); return; }
         const gate = hitGateStrict(wp.x, wp.y);
         if (gate) {
+          // Check if lock button was clicked on INPUT gate
+          if (gate.type === 'INPUT') {
+            const btnR = 8 / zoom;
+            const btnX = gate.x + gate.w - btnR - 4 / zoom;
+            const btnY = gate.y + btnR + 4 / zoom;
+            if (Math.hypot(wp.x - btnX, wp.y - btnY) < btnR * 1.4) {
+              gate.manualLock = !gate.manualLock;
+              rebuildAutoSimCombos();
+              simulateAll();
+              notify(
+                gate.manualLock
+                  ? `🔒 ${gate.label} LOCKED at ${gate.inputValues[0]}`
+                  : `🔓 ${gate.label} unlocked — auto-sim resumes`,
+                gate.manualLock ? 'warn' : 'ok'
+              );
+              return;
+            }
+          }
           draggingGate = gate; dragOffset = { x: wp.x - gate.x, y: wp.y - gate.y }; selectedGate = gate;
           showGateInfo(gate.type); showTruthTable(gate.type, gate.inputValues);
           updateLabelEditor(gate); updateGateStats(gate);
@@ -3362,8 +3561,22 @@
           if (port.type !== wireStart.type) {
             const from = wireStart.type === 'output' ? wireStart : port;
             const to = wireStart.type === 'input' ? wireStart : port;
+            // Block wiring FROM an OUTPUT bulb
+            if (from.gate.type === 'OUTPUT') {
+              notify('OUTPUT bulb cannot have outgoing wires', 'warn');
+              wireStart = null; setTool('select'); return;
+            }
             if (from.gate.id !== to.gate.id) {
               const exists = wires.some(w => w.fromGate === from.gate.id && w.toGate === to.gate.id && w.toPort === to.index);
+              // Block more than one input wire to OUTPUT bulb
+              if (to.gate.type === 'OUTPUT') {
+                const alreadyHasInput = wires.some(w => w.toGate === to.gate.id);
+                if (alreadyHasInput) {
+                  notify('Output bulb accepts only ONE input wire', 'warn');
+                  wireStart = null; setTool('select'); return;
+                }
+              }
+
               if (!exists) {
                 saveUndo(); wires.push({ id: Date.now(), fromGate: from.gate.id, toGate: to.gate.id, toPort: to.index });
                 logSim(`Wire: ${from.gate.label}→${to.gate.label}[${to.index}]`);
@@ -3417,10 +3630,14 @@
       if (gate) {
         if (gate.type === 'INPUT') {
           gate.inputValues[0] = gate.inputValues[0] ? 0 : 1;
-          logSim(`INPUT "${gate.label}" → ${gate.inputValues[0]}`);
+          // Auto-lock when manually toggled
+          gate.manualLock = true;
+          rebuildAutoSimCombos();
+          logSim(`INPUT "${gate.label}" → ${gate.inputValues[0]} [LOCKED]`);
           simulateAll();
-          if (voiceEnabled) speak(`Input ${gate.label} is now ${gate.inputValues[0]}`);
-        } else { showGateInfo(gate.type); switchTab('info'); }
+          notify(`🔒 ${gate.label}: ${gate.inputValues[0] ? 'ON' : 'OFF'} (locked)`, gate.inputValues[0] ? 'ok' : 'warn');
+          if (voiceEnabled) speak(`Input ${gate.label} is now ${gate.inputValues[0] ? 'one' : 'zero'}`);
+        }
       }
     }
     function onContextMenu(e) {
@@ -3493,6 +3710,48 @@
       });
       if (selectedGate) { const live = gates.find(g => g.id === selectedGate.id); if (live) showTruthTable(live.type, live.inputValues); }
       updateWaveform(); updateStatus(); updateBooleanPanel();
+
+      // Check if any output just turned ON for the first time
+      // Success fires ONLY if circuit passes full validation AND output is HIGH
+      // Congrats: only fires if circuit passes full validation AND all expected outputs are HIGH
+      const outputGates = gates.filter(g => g.type === 'OUTPUT');
+      outputGates.forEach(g => {
+        if (g._everGlowed) return;
+        if (g.outputValue !== 1) return;
+
+        const hardErrors = getCircuitErrors().filter(e => !e.startsWith('Warning:'));
+        if (hardErrors.length > 0) return; // blocked — circuit has real errors
+
+        const expectedOuts = EXP_EXPECTED_OUTPUTS[currentExp] || 1;
+        const connectedOutputs = outputGates.filter(og => wires.some(w => w.toGate === og.id));
+        const glowingCount = connectedOutputs.filter(og => og.outputValue === 1).length;
+        if (glowingCount < expectedOuts) return; // not all required outputs are HIGH yet
+
+        // All conditions met — mark all outputs as celebrated together
+        outputGates.forEach(og => { og._everGlowed = true; });
+        showCongrats(connectedOutputs.map(og => og.label || 'Y').join(' + '));
+      });
+    }
+
+
+    function showCongrats(label) {
+      const popup = document.getElementById('circuitCheckPopup');
+      const overlay = document.getElementById('popupOverlay');
+      document.getElementById('popupIcon').textContent = '🏆';
+      document.getElementById('popupTitle').style.color = 'var(--yellow)';
+      document.getElementById('popupTitle').textContent = "YOU'RE A CHAMP!";
+      document.getElementById('popupMsg').textContent =
+        'Output' + (label.includes('+') ? 's [' + label + ']' : ' "' + label + '"') +
+        ' verified — circuit fully wired and correct. Great work! 🎉';
+      document.getElementById('popupErrors').innerHTML = '';
+      popup.classList.remove('error-popup', 'success-popup');
+      popup.classList.add('success-popup');
+      popup.style.borderColor = 'var(--yellow)';
+      popup.style.boxShadow = '0 24px 70px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.25)';
+      popup.classList.add('show');
+      overlay.classList.add('show');
+      if (voiceEnabled) speak('Congratulations! Your circuit is correct. You are a champ!');
+      notify('💡 Circuit verified — You\'re a champ!', 'ok');
     }
 
     function computeGate(g) {
@@ -3513,7 +3772,7 @@
     }
 
     function stepSimulation() {
-      const inputs = gates.filter(g => g.type === 'INPUT');
+      const inputs = gates.filter(g => g.type === 'INPUT' && !g.manualLock);
       if (!inputs.length) { notify('No INPUT gates on canvas', 'warn'); return; }
       // advance to next combo
       if (autoSimCombos.length) {
@@ -4091,7 +4350,14 @@
 
     /* ═══════════════════════════ CONTEXT MENU ═══════════════════════════ */
     function hideCtxMenu() { document.getElementById('ctxMenu').style.display = 'none'; }
-    function ctxToggleInput() { if (ctxTarget && ctxTarget.type === 'INPUT') { ctxTarget.inputValues[0] = ctxTarget.inputValues[0] ? 0 : 1; simulateAll(); } hideCtxMenu(); }
+    function ctxToggleInput() {
+      if (ctxTarget && ctxTarget.type === 'INPUT') {
+        ctxTarget.inputValues[0] = ctxTarget.inputValues[0] ? 0 : 1;
+        simulateAll();
+        notify(`${ctxTarget.label}: ${ctxTarget.inputValues[0] ? 'ON ▶' : 'OFF ◀'}`, ctxTarget.inputValues[0] ? 'ok' : 'warn');
+      }
+      hideCtxMenu();
+    }
     function ctxRotate() { if (ctxTarget) { notify('Rotation: visual only in this version', 'warn'); } hideCtxMenu(); }
     function duplicateGate(gate) {
       saveUndo(); const clone = JSON.parse(JSON.stringify(gate));
@@ -4239,75 +4505,237 @@
       return shapes[type] || `<rect ${s} x="5" y="3" width="24" height="18" rx="3"/>`;
     }
 
-    function checkCircuitConnections() {
-      var inputs = gates.filter(function (g) { return g.type === 'INPUT'; });
-      var outputs = gates.filter(function (g) { return g.type === 'OUTPUT'; });
-      var popup = document.getElementById('circuitCheckPopup');
-      var overlay = document.getElementById('popupOverlay');
-      var icon = document.getElementById('popupIcon');
-      var title = document.getElementById('popupTitle');
-      var msg = document.getElementById('popupMsg');
-      var errBox = document.getElementById('popupErrors');
-      var errors = [];
+    // Shared validation logic — returns array of error strings
+    function getCircuitErrors() {
+      const inputs = gates.filter(g => g.type === 'INPUT');
+      const outputs = gates.filter(g => g.type === 'OUTPUT');
+      const errors = [];
 
       if (!gates.length) {
-        errors.push('Canvas is empty - drag some gates onto the canvas first.');
-      } else {
-        if (!inputs.length) errors.push('No INPUT nodes found. Add at least one INPUT gate.');
-        if (!outputs.length) errors.push('No OUTPUT (bulb) node found. Add at least one OUTPUT gate.');
-        outputs.forEach(function (g) {
-          var connected = wires.some(function (w) { return w.toGate === g.id; });
-          if (!connected) errors.push('Output bulb "' + (g.label || 'Y') + '" has no wire connected to it.');
-        });
-        gates.forEach(function (g) {
-          if (g.type === 'INPUT' || g.type === 'OUTPUT') return;
-          for (var i = 0; i < g.inputs; i++) {
-            var connected = wires.some(function (w) { return w.toGate === g.id && w.toPort === i; });
-            if (!connected) errors.push(g.type + (g.label ? ' (' + g.label + ')' : '') + ': input ' + (i + 1) + ' is unconnected.');
-          }
-        });
+        errors.push('Canvas is empty — drag some gates onto the canvas first.');
+        return errors;
       }
 
+      if (!inputs.length) errors.push('No INPUT nodes found. Add at least one INPUT gate.');
+      if (!outputs.length) errors.push('No OUTPUT (bulb) node found. Add at least one OUTPUT gate.');
+
+      // Check expected output count for current experiment
+      const expectedOuts = EXP_EXPECTED_OUTPUTS[currentExp] || 1;
+      const connectedOutputs = outputs.filter(g => wires.some(w => w.toGate === g.id));
+      if (connectedOutputs.length < expectedOuts) {
+        errors.push(
+          'This experiment expects ' + expectedOuts + ' connected output bulb(s). ' +
+          'You have ' + connectedOutputs.length + ' connected.'
+        );
+      }
+
+      // Each output must have exactly 1 input wire, no outgoing wires
+      outputs.forEach(g => {
+        const inputCount = wires.filter(w => w.toGate === g.id).length;
+        const outputCount = wires.filter(w => w.fromGate === g.id).length;
+        if (inputCount === 0) {
+          errors.push('Output bulb "' + (g.label || 'Y') + '" has no wire connected to it.');
+        } else if (inputCount > 1) {
+          errors.push('Output bulb "' + (g.label || 'Y') + '" has ' + inputCount + ' input wires — only 1 allowed.');
+        }
+        if (outputCount > 0) {
+          errors.push('Output bulb "' + (g.label || 'Y') + '" must not have outgoing wires.');
+        }
+      });
+
+      // Every non-IO gate must have all inputs connected
+      gates.forEach(g => {
+        if (g.type === 'INPUT' || g.type === 'OUTPUT') return;
+        for (let i = 0; i < g.inputs; i++) {
+          if (!wires.some(w => w.toGate === g.id && w.toPort === i)) {
+            errors.push(g.type + (g.label ? ' (' + g.label + ')' : '') + ': input ' + (i + 1) + ' is unconnected.');
+          }
+        }
+      });
+
+      // Warn about gates not connected to any output path
+      const reachableFromOutput = new Set();
+      const traceBack = (gateId) => {
+        if (reachableFromOutput.has(gateId)) return;
+        reachableFromOutput.add(gateId);
+        wires.filter(w => w.toGate === gateId).forEach(w => traceBack(w.fromGate));
+      };
+      outputs.forEach(g => traceBack(g.id));
+
+      const floatingGates = gates.filter(g =>
+        g.type !== 'INPUT' && g.type !== 'OUTPUT' && !reachableFromOutput.has(g.id)
+      );
+      if (floatingGates.length > 0) {
+        errors.push(
+          'Warning: ' + floatingGates.length + ' gate(s) (' +
+          floatingGates.map(g => g.label || g.type).join(', ') +
+          ') are not connected to any output path.'
+        );
+      }
+
+      return errors;
+    }
+
+    // CHECK button handler — uses shared validation, then shows result
+    function checkCircuitConnections() {
+      const errors = getCircuitErrors();
+      const outputs = gates.filter(g => g.type === 'OUTPUT');
+
+      const popup = document.getElementById('circuitCheckPopup');
+      const overlay = document.getElementById('popupOverlay');
+      const icon = document.getElementById('popupIcon');
+      const title = document.getElementById('popupTitle');
+      const msg = document.getElementById('popupMsg');
+      const errBox = document.getElementById('popupErrors');
+
       popup.classList.remove('error-popup', 'success-popup');
+      popup.style.borderColor = '';
+      popup.style.boxShadow = '';
       errBox.innerHTML = '';
 
-      if (errors.length) {
+      // Separate hard errors from warnings
+      const hardErrors = errors.filter(e => !e.startsWith('Warning:'));
+      const warnings = errors.filter(e => e.startsWith('Warning:'));
+
+      if (hardErrors.length) {
         icon.textContent = '⚠️';
         title.style.color = 'var(--red)';
-        title.textContent = 'CONNECTION ERROR' + (errors.length > 1 ? 'S' : '');
-        msg.textContent = 'Found ' + errors.length + ' issue' + (errors.length > 1 ? 's' : '') + ' in your circuit. Fix and click CHECK again.';
-        errors.forEach(function (e) {
-          var d = document.createElement('div');
+        title.textContent = 'CONNECTION ERROR' + (hardErrors.length > 1 ? 'S' : '');
+        msg.textContent = 'Found ' + hardErrors.length + ' issue' + (hardErrors.length > 1 ? 's' : '') + ' in your circuit. Fix and click CHECK again.';
+        hardErrors.forEach(e => {
+          const d = document.createElement('div');
           d.className = 'popup-error-item';
           d.textContent = '• ' + e;
           errBox.appendChild(d);
         });
+        // Still show warnings below errors
+        if (warnings.length) {
+          warnings.forEach(w => {
+            const d = document.createElement('div');
+            d.className = 'popup-error-item';
+            d.style.cssText = 'color:var(--yellow);border-left-color:var(--yellow);background:rgba(255,215,0,0.05)';
+            d.textContent = '⚠ ' + w.replace('Warning: ', '');
+            errBox.appendChild(d);
+          });
+        }
         popup.classList.add('error-popup');
+
       } else {
-        var glowing = outputs.filter(function (g) { return g.outputValue; });
-        if (glowing.length > 0) {
+        // No hard errors — check output values
+        const connectedOutputs = outputs.filter(g => wires.some(w => w.toGate === g.id));
+        const glowing = connectedOutputs.filter(g => g.outputValue === 1);
+        const expectedOuts = EXP_EXPECTED_OUTPUTS[currentExp] || 1;
+        const allExpectedGlowing = glowing.length === expectedOuts;
+        const someGlowing = glowing.length > 0;
+
+        // Build output status breakdown
+        let outputBreakdown = connectedOutputs.map(g =>
+          (g.label || 'OUT') + ' = ' + g.outputValue
+        ).join('  |  ');
+
+        if (someGlowing) {
           icon.textContent = '💡';
           title.style.color = 'var(--green)';
-          title.textContent = 'CIRCUIT CORRECT!';
-          msg.textContent = glowing.length > 1
-            ? 'All ' + glowing.length + ' output bulbs are glowing! Your circuit outputs logic HIGH.'
-            : 'The output bulb is glowing! Circuit is properly connected and output is logic HIGH (1).';
+          title.textContent = allExpectedGlowing ? 'CIRCUIT CORRECT!' : 'PARTIAL SUCCESS';
+          msg.textContent = allExpectedGlowing
+            ? 'All ' + expectedOuts + ' output(s) verified correct. Circuit is properly wired and outputs logic HIGH.\n' + outputBreakdown
+            : glowing.length + ' of ' + expectedOuts + ' expected output(s) are HIGH. ' + outputBreakdown;
           popup.classList.add('success-popup');
         } else {
           icon.textContent = '🔌';
           title.style.color = 'var(--cyan)';
-          title.textContent = 'WIRING OK - BULB IS OFF';
-          msg.textContent = 'All connections are correct! The bulb is OFF because output is logic LOW (0) with your current inputs. Toggle your INPUT values to make the bulb glow.';
+          title.textContent = 'WIRING OK — OUTPUT IS OFF';
+          msg.textContent = 'All connections are correct but all outputs are LOW (0) with current inputs.\n' + outputBreakdown + '\nToggle your INPUT values to make output(s) go HIGH.';
           popup.classList.add('success-popup');
         }
+
+        // Show warnings even on success
+        if (warnings.length) {
+          warnings.forEach(w => {
+            const d = document.createElement('div');
+            d.className = 'popup-error-item';
+            d.style.cssText = 'color:var(--yellow);border-left-color:var(--yellow);background:rgba(255,215,0,0.05)';
+            d.textContent = '⚠ ' + w.replace('Warning: ', '');
+            errBox.appendChild(d);
+          });
+          if (someGlowing) startSignalFlowSim();
+        }
       }
+
       popup.classList.add('show');
       overlay.classList.add('show');
     }
 
+
+    /* ═══ SIGNAL FLOW SIMULATION ═══ */
+    let signalFlowActive = false;
+    let signalFlowWires = [];
+    let signalFlowFrame = 0;
+    let signalFlowAnimID = null;
+
+    function startSignalFlowSim() {
+      signalFlowActive = true;
+      signalFlowFrame = 0;
+      // Collect only wires that carry logic HIGH (value=1)
+      signalFlowWires = wires.filter(w => {
+        const fg = gates.find(g => g.id === w.fromGate);
+        return fg && fg.outputValue === 1;
+      });
+      notify('Signal flow simulation started — pulses show live signal paths', 'ok');
+      if (voiceEnabled) speak('Simulating signal flow. Watch the highlighted paths.');
+    }
+
+    function drawSignalFlow() {
+      if (!signalFlowActive || !signalFlowWires.length) return;
+      signalFlowFrame++;
+      // Auto-stop after 6 seconds (180 frames at 60fps)
+      if (signalFlowFrame > 360) { signalFlowActive = false; return; }
+
+      signalFlowWires.forEach((wire, wi) => {
+        const fg = gates.find(g => g.id === wire.fromGate);
+        const tg = gates.find(g => g.id === wire.toGate);
+        if (!fg || !tg) return;
+
+        const sp = portPos(fg, 'output', 0);
+        const ep = portPos(tg, 'input', wire.toPort);
+        const dx = ep.x - sp.x;
+
+        // Animate a bright pulse dot along the wire
+        const speed = 0.018;
+        const offset = (wi * 0.25) % 1; // stagger per wire
+        const t = ((signalFlowFrame * speed) + offset) % 1;
+
+        // Bezier point at t
+        const it = 1 - t;
+        const cp1x = sp.x + dx * 0.55, cp1y = sp.y;
+        const cp2x = ep.x - dx * 0.55, cp2y = ep.y;
+        const px = it * it * it * sp.x + 3 * it * it * t * cp1x + 3 * it * t * t * cp2x + t * t * t * ep.x;
+        const py = it * it * it * sp.y + 3 * it * it * t * cp1y + 3 * it * t * t * cp2y + t * t * t * ep.y;
+
+        ctx.save();
+        ctx.translate(panX, panY); ctx.scale(zoom, zoom);
+
+        // Pulse glow
+        const grad = ctx.createRadialGradient(px, py, 0, px, py, 10 / zoom);
+        grad.addColorStop(0, 'rgba(255,255,100,0.95)');
+        grad.addColorStop(0.3, 'rgba(0,255,136,0.6)');
+        grad.addColorStop(1, 'rgba(0,255,136,0)');
+        ctx.beginPath(); ctx.arc(px, py, 10 / zoom, 0, Math.PI * 2);
+        ctx.fillStyle = grad; ctx.fill();
+
+        // Bright core dot
+        ctx.beginPath(); ctx.arc(px, py, 3.5 / zoom, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 12 / zoom;
+        ctx.fill(); ctx.shadowBlur = 0;
+        ctx.restore();
+      });
+    }
     function dismissCheckPopup() {
       document.getElementById('circuitCheckPopup').classList.remove('show');
       document.getElementById('popupOverlay').classList.remove('show');
+      document.getElementById('circuitCheckPopup').style.borderColor = '';
+      document.getElementById('circuitCheckPopup').style.boxShadow = '';
     }
 
     window.onload = init;
